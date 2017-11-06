@@ -1,11 +1,13 @@
 const { Pool } = require('pg');
 
+var config = require('./db-config.json');
+
 const pool = new Pool({
-    user: 'root',
-    host: 'dit-s5.cf4hu66k5z3p.eu-central-1.rds.amazonaws.com',
-    database: 'Forum',
-    password: '12345678',
-    port: 5432,
+    user: config.user,
+    host: config.host,
+    database: config.database,
+    password: config.password,
+    port: config.port,
 });
 
 global.database = pool;

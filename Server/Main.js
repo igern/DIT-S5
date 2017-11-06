@@ -8,8 +8,6 @@ require('./Notifications');
 require('./Database');
 require('./Routes')(rest_app, {});
 
-global.test = "bla";
-
 rest_app.listen(port, () => {
-    console.log('We are live on ' + port);
+    console.log('Forum live @ 127.0.0.1:' + port);
 });
