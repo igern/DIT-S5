@@ -3,17 +3,41 @@ var jwt = require('jsonwebtoken');
 module.exports = function(app, db) {
     app.use(function(req, res, next) {
         res.header("Access-Control-Allow-Origin", "*");
-        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
         next();
     });
 
-    app.post('/auth', (req, res) => {
-        var token = jwt.sign({
-            exp: Math.floor(Date.now() / 1000) + 604800, // 604800 -> 1 week
-            data: '123'
-        }, 'secret');
+    app.post('/auth', (req, ress) => {
+        (async() => {
+            const text = "SELECT * FROM profile WHERE brugernavn=$1 AND kodeord=$2";
+            const values = [req.body.username, req.body.password];
+    
+            const client = await global.database.connect();
 
-        res.send(token);
+            try {
+                await client.query(text, values, (err, res) => {
+                    if(err) {
+                        console.log(err.stack);
+                    } else {
+                        if(res.rows.length > 0) {
+                            var token = jwt.sign({
+                                exp: Math.floor(Date.now() / 1000) + 604800, // 604800 -> 1 week
+                                data: JSON.stringify(res.rows[0].brugernavn) // role will probably be added here
+                            }, 'secret');
+                    
+                            ress.status(200).send(token);
+                        } else {
+                            ress.status(401).send();
+                        }
+                    }
+                });
+            } catch(e) {
+                throw e;
+            } finally {
+                client.release();
+            }
+        })().catch(e => console.error(e.stack));
+        
     });
 
     app.all('*', (req, res, next) => {

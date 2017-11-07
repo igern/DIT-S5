@@ -61,16 +61,41 @@
         var containerEle = document.getElementById('container');
         containerEle.style.marginTop = (window.innerHeight / 2) - (315 / 2) + 'px';
       };
+      
+      console.log(JSON.stringify({ hi: 'hello' }));
 
       function signIn() {
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "http://127.0.0.1:20895/auth", false);
-        xhr.send();
+        //$.ajax({
+        //    url: 'http://127.0.0.1:20895/auth',
+        //    type: 'POST',
+        //    
+        //    headers: {
+        //        hi: 'hello'
+        //    },
+        //    body: JSON.stringify({ hi: 'hello' }),
+
+        //    success: function() { alert("Success!"); },
+        //    //done: function() { alert("Test!"); }
+        //});
+        var username = $("#username").val();
+        var password = $("#password").val();
+
+        $.post("http://127.0.0.1:20895/auth", { username:username, password:password }, function(data) {
+            console.log(data);
+        });
+
+        
+
+        //var xhr = new XMLHttpRequest();
+        //xhr.open("POST", "http://127.0.0.1:20895/auth", false);
+        //xhr.setRequestHeader("Authorization", "Basic " + window.btoa("user" + ":" + "password")); 
+        //xhr.setRequestHeader("Accept","text/plain");
+        //xhr.setRequestHeader("Content-Type","text/plain");
+        //xhr.send();
 
         //$('#container').removeClass('animated shake').addClass('animated shake');
 
         alert('Check console to get your token! (F12 in Chrome)');
-        console.log('Token -> ' + xhr.response);
       };
     </script>
 

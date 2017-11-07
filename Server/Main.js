@@ -1,6 +1,10 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var rest_app = express();
+rest_app.use(bodyParser.urlencoded({
+    extended: false
+}));
+rest_app.use(bodyParser.json());
 
 require('./Notifications');
 require('./Database');
