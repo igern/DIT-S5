@@ -10,9 +10,6 @@ io.on('connection', function (socket) {
 
     socket.on('disconnect', function(socket) {
         console.log("ID at deletion -> " + socket.id);
-        console.log("Before -> " + clients.length);
-        delete clients[socket.id];
-        console.log("After -> " + clients.length);
     });
 });
 

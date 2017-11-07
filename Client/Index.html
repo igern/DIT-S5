@@ -1,16 +1,87 @@
-<html>
+<!doctype html>
+<html lang="en">
 <head>
+    <!-- Basics -->
+    <title>DIT-S5</title>
+    <style>
+      html, body {
+        background-color: #ededed !important;
+
+      }
+      
+    </style>
+
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap 4 -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
+
+    <!-- Socket.IO 2 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+
+    <!-- JQuery 3 -->
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 </head>
 <body>
+    <div id="container" class="container">
+        <div class="row h-100">
+            <div class="col-4"></div>
+            <div class="col-4">
+                <div id="card" class="animated slideInLeft card text-black bg-default">
+                    <div class="card-body">
+                        <h3 class="card-title" style="text-align: center; margin-top: 15px;">DIT-S5</h3>
+
+                        <p class="card-text">
+                            <form>
+                              <input style="margin-top: 35px;" id="username" type="text" class="form-control" name="username" placeholder="Username">
+                              <input style="margin-top: 15px;"type="password" class="form-control" id="password" placeholder="Password">
+                            </form>
+                        </p>
+
+                        <button onclick="signIn()" type="button" class="btn btn-primary btn-block" style="margin-top: 40px; margin-bottom: 20px;">Sign-in</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+      var containerEle = document.getElementById('container');
+      containerEle.style.marginTop = (window.innerHeight / 2) - (315 / 2) + 'px';
+
+      window.onresize = function(event) {
+        var containerEle = document.getElementById('container');
+        containerEle.style.marginTop = (window.innerHeight / 2) - (315 / 2) + 'px';
+      };
+
+      function signIn() {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "http://127.0.0.1:20895/auth", false);
+        xhr.send();
+
+        //$('#container').removeClass('animated shake').addClass('animated shake');
+
+        alert('Check console to get your token! (F12 in Chrome)');
+        console.log('Token -> ' + xhr.response);
+      };
+    </script>
+
+    <!-- Socket Communication -->
     <script>
       var socket = io('http://127.0.0.1');
       socket.on('Greeting', function (data) {
         console.log("bla!");
-
-        //for(i = 0; i < 10; i++) {
-        //    socket.emit('my other event', { my: 'data' });
-        //}
+        for(i = 0; i < 10; i++) {
+            socket.emit('my other event', { my: 'data' });
+        }
       });
     </script>
 </body>

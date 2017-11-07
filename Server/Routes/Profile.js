@@ -2,7 +2,6 @@ module.exports = function(app, db) {
     app.get('/profile', (req, res) => {
         global.database.query('SELECT * FROM Profile', (err, res) => {
             console.log(res.rows[0]);
-            global.database.end();
         });
 
         console.log("profile get was called! -> " + global.test);
