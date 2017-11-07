@@ -1,10 +1,20 @@
 var express = require('express');
+var cors = require('cors');
 var bodyParser = require('body-parser');
 var rest_app = express();
-rest_app.use(bodyParser.urlencoded({
-    extended: false
-}));
+
+rest_app.use(bodyParser.urlencoded({ extended: false }));
 rest_app.use(bodyParser.json());
+
+rest_app.options('*', cors());
+
+rest_app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, OPTIONS");
+    res.header("Access-Control-Expose-Headers", "Response, Token");
+    next();
+});
 
 require('./Notifications');
 require('./Database');

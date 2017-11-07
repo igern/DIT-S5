@@ -1,16 +1,11 @@
 var jwt = require('jsonwebtoken');
 
 module.exports = function(app, db) {
-    app.use(function(req, res, next) {
-        res.header("Access-Control-Allow-Origin", "*");
-        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-        next();
-    });
-
     app.post('/auth', (req, ress) => {
         (async() => {
+            
             const text = "SELECT * FROM profile WHERE brugernavn=$1 AND kodeord=$2";
-            const values = [req.body.username, req.body.password];
+            const values = [req.headers.username, req.headers.password];
     
             const client = await global.database.connect();
 
@@ -25,8 +20,10 @@ module.exports = function(app, db) {
                                 data: JSON.stringify(res.rows[0].brugernavn) // role will probably be added here
                             }, 'secret');
                     
-                            ress.status(200).send(token);
+                            ress.set('Response', token);
+                            ress.status(200).send();
                         } else {
+                            ress.set('Response', '');
                             ress.status(401).send();
                         }
                     }
@@ -37,7 +34,6 @@ module.exports = function(app, db) {
                 client.release();
             }
         })().catch(e => console.error(e.stack));
-        
     });
 
     app.all('*', (req, res, next) => {
