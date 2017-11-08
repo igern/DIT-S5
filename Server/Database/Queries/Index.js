@@ -3,7 +3,8 @@ module.exports = Object.freeze({
     SelectProfileByUsernameAndPassword: 'SELECT * FROM profile WHERE brugernavn=$1 AND kodeord=$2',
     SelectProfileByUsername: 'SELECT * FROM profile WHERE brugernavn=$1',
     SelectProfileByEmail: 'SELECT * FROM profile WHERE email=$1',
-    InsertProfile: 'INSERT INTO profile (brugernavn, kodeord, email) VALUES ($1, $2, $3)'
+    InsertProfile: "INSERT INTO profile (brugernavn, kodeord, email, rolle) VALUES ($1, $2, $3, 'Regular')",
+    DeleteProfile: "DELETE FROM profile WHERE brugernavn=$1"
 
     // Category Related Queries
 

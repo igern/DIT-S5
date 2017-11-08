@@ -25,156 +25,13 @@
     <link href="https://fonts.googleapis.com/css?family=Nothing+You+Could+Do" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Josefin+Slab" rel="stylesheet">
 
-    <!-- Style -->
-    <style>
-        :root {
-            --rounding: 10px;
-        }
-
-        body {
-            padding: 0;
-            margin: 0;
-            background-color: #ededed;
-            font-family: 'Open Sans', sans-serif;
-        }
-
-        .container {
-            width: 650px;
-            height: 400px;
-
-            background-color: #fff;
-            margin: auto;
-
-            border-radius: var(--rounding);
-            
-            -webkit-box-shadow: 0 10px 6px -6px #777;
-       -moz-box-shadow: 0 10px 6px -6px #777;
-            box-shadow: 0 10px 6px -6px #777;
-        }
-
-        .info-container {
-            width: 300px;
-            height: 100%;
-
-            float: left;
-            
-            border-radius: var(--rounding) 0px 0px var(--rounding);
-
-            background: #6078EA; 
-            background: -webkit-linear-gradient(left top, #17EAD9, #6078EA); 
-            background: -o-linear-gradient(bottom right, #17EAD9, #6078EA); 
-            background: -moz-linear-gradient(bottom right, #17EAD9, #6078EA); 
-            background: linear-gradient(to bottom right, #17EAD9, #6078EA);
-        }
-
-        .img-max {
-            width: 100px;
-            height: 100px;
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: 50% 50%;
-        }
-
-        .action-container {
-            width: 350px;
-            height: 100%;
-            float: left;
-            position: relative;
-
-            border-radius: 0px var(--rounding) var(--rounding) 0px;
-        }
-
-        .tab-bar {
-            position: relative;
-            top: 0;
-            width: 100%;
-            text-align: center;
-            display: flex;
-
-            border-radius: 0px var(--rounding) 0px 0px;
-        }
-
-        .tab {
-            height: 30px;
-            padding-top: 15px;
-            flex: 1 1 auto;
-        }
-
-        .footer{
-            position: relative;
-            bottom: 0;
-            width: 100%;
-            position: absolute;
-            text-align: center;
-
-            border-radius: 0px 0px var(--rounding) 0px;
-        }
-
-        .clickable {
-            cursor: pointer;
-            -webkit-user-select: none;  
-            -moz-user-select: none;    
-            -ms-user-select: none;      
-            user-select: none;
-        }
-
-        .active-tab {
-            border-bottom-style: solid;
-            border-color: #3498DB;
-            border-width: 2px;
-        }
-
-        .button {
-            height: 10px;
-            width: 80%;
-            padding-top: 5px;
-            padding-bottom: 15px;
-            margin-bottom: 15px;
-            border-radius: 10px;
-            border: 2px solid #3498DB;
-            text-align: center;
-
-            -webkit-transition-duration: 0.4s; /* Safari */
-            transition-duration: 0.4s;
-        }
-
-        .button:hover {
-            background-color: #3498DB; /* Green */
-            color: white;
-        }
-
-        input[type=text], select {
-            width: 80%;
-            padding: 12px 20px;
-            margin: 8px 0;
-            display: inline-block;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        input[type=password], select {
-            width: 80%;
-            padding: 12px 20px;
-            margin: 8px 0;
-            display: inline-block;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        a {
-            text-decoration: none;
-            color: #000;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-    </style>
+    <!-- Theme -->
+    <link href="./Styles/IndexTheme.css" rel="stylesheet">
 </head>
 <body>
+        <!-- Container for the entire sign-in / registration GUI -->
         <div id="container" class="container">
+            <!-- Container for the information about the project -->
             <div class="info-container">
                 <div align="center" style="padding-top: 20px">
                     <span style="color: black; font-family: 'Nothing You Could Do', cursive; font-size: 40px;">
@@ -189,6 +46,7 @@
                 </div>
             </div>
 
+            <!-- Container for everything the user can interact with -->
             <div class="action-container">
                 <div class="tab-bar">
                     <div onclick="activateSignInTab()" id="signInTab" class="clickable tab">Sign-in</div>
@@ -236,128 +94,13 @@
             </div>
         </div>
 
-        
-
         <!-- Toasting Library Script -->
         <script src="./Scripts/snackbar.min.js"></script>
 
-        <script>
-            window.onresize = function(event) {
-                document.getElementById('container').style.marginTop = (window.innerHeight / 2) - (400 / 2) + "px";
-            };
-            
-            $(window).resize();
+        <!-- Index Related Scripting -->
+        <script src="./Scripts/IndexScript.js"></script>
 
-            function toast(msg) {
-                $.snackbar({content: msg, timeout: 5000, style: "toast" });
-            }
-
-            function signIn() {
-                var username = $("#username_signin").val();
-                var password = $("#password").val();
-                
-                var result = $.ajax({
-                    url: 'http://127.0.0.1:20895/auth',
-                    type: 'POST',
-                    headers: {
-                        'username':username,
-                        'password':sha3_512(password)
-                    },
-                    statusCode: {
-                        200: function() {
-                            toast("Authentication succeeded! Check the console for your token.");
-                        },
-
-                        401: function() {
-                            toast("Authentication failed! Username and/or password was wrong.");
-                        }
-                    }
-                }).then(function(data, status, xhr) {
-                    console.log(xhr.getAllResponseHeaders());
-                });
-            };
-
-            function register() {
-                var username = $("#username_register").val();
-                var email = $("#email").val();
-                var password_one = $("#password_one").val();
-                var password_two = $("#password_two").val();
-
-                if(username.length == 0) {
-                    console.log("Username -> " + username);
-                    toast("You need to enter a username!");
-                    return;
-                }
-
-                if(email.length == 0) {
-                    toast("You need to enter en email!");
-                    return;
-                }
-
-                if(password_one.length == 0 || password_two.length == 0) {
-                    toast("You need to enter a password!");
-                    return;
-                }
-
-                if(password_one != password_two) {
-                    toast("The passwords that you have entered do not match!");
-                    return;
-                }
-                
-                var result = $.ajax({
-                    url: 'http://127.0.0.1:20895/profile',
-                    type: 'PUT',
-                    headers: {
-                        'username':username,
-                        'email':email,
-                        'password': sha3_512(password_one)
-                    },
-                    statusCode: {
-                        200: function() {
-                            toast("Account successfully created!");
-                        },
-
-                        400: function() {
-                            toast("Email is already in use!");
-                        },
-
-                        409: function() {
-                            toast("Username is already in use!");
-                        }
-                    }
-                }).then(function(data, status, xhr) {
-                    // redirect to forum ..
-                });
-            }
-
-            function activateSignInTab() {
-                $("#registerTab").removeClass('active-tab');
-                $("#signInTab").addClass('active-tab');
-                $("#pane-two").css("display", "none");
-                $("#pane-one").css("display", "block");
-            }
-
-            function activateRegisterTab() {
-                $("#signInTab").removeClass('active-tab');
-                $("#registerTab").addClass('active-tab');
-                $("#pane-one").css("display", "none");
-                $("#pane-two").css("display", "block");
-            }
-
-            activateSignInTab();
-        </script>
-
-    <!-- Socket Communication -->
-    <script>
-      var socket = io('http://127.0.0.1');
-      socket.on('Greeting', function (data) {
-        console.log("bla!");
-        for(i = 0; i < 10; i++) {
-            socket.emit('my other event', { my: 'data' });
-        }
-      });
-    </script>
-
-    
+        <!-- Socket Communication -->
+        <script src="./Scripts/Socket.js"></script>
 </body>
 </html>

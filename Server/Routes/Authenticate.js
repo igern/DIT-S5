@@ -13,7 +13,7 @@ module.exports = function(app, db) {
                     case 1:
                         var token = jwt.sign({
                             exp: Math.floor(Date.now() / 1000) + 604800, // 604800 -> 1 week
-                            data: JSON.stringify(QueryResult.rows[0].brugernavn) // role will probably be added here
+                            data: QueryResult.rows[0].brugernavn
                         }, 'secret');
 
                         res.set('Token', token);
