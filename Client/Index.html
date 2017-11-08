@@ -3,6 +3,23 @@
 <head>
     <!-- Basics -->
     <title>DIT-S5</title>
+
+    <!-- Meta -->
+    <meta charset="utf-8">
+
+    <!-- Socket.IO 2 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+
+    <!-- JQuery 3 -->
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+
+    <!-- Hashing Library -->
+    <script src="Scripts/sha3.min.js"></script>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
+    <!-- Style -->
     <style>
         :root {
             --rounding: 10px;
@@ -12,6 +29,7 @@
             padding: 0;
             margin: 0;
             background-color: #ededed;
+            font-family: 'Open Sans', sans-serif;
         }
 
         .container {
@@ -22,7 +40,10 @@
             margin: auto;
 
             border-radius: var(--rounding);
-            border: 1px solid #000;
+            
+            -webkit-box-shadow: 0 10px 6px -6px #777;
+       -moz-box-shadow: 0 10px 6px -6px #777;
+            box-shadow: 0 10px 6px -6px #777;
         }
 
         .info-container {
@@ -96,9 +117,10 @@
         }
 
         .button {
-            height: 15px;
+            height: 10px;
             width: 80%;
-            padding: 15px;
+            padding-top: 5px;
+            padding-bottom: 15px;
             margin-bottom: 15px;
             border-radius: 10px;
             border: 2px solid #3498DB;
@@ -142,18 +164,6 @@
             text-decoration: underline;
         }
     </style>
-
-    <!-- Meta -->
-    <meta charset="utf-8">
-
-    <!-- Socket.IO 2 -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
-
-    <!-- Animate.css -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
-
-    <!-- JQuery 3 -->
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 </head>
 <body>
         <div id="container" class="container">
@@ -169,7 +179,7 @@
                 <div style="margin-top: 75px;" align="center">
                     <input id="username" type="text" placeholder="Username">
                     <input id="password" type="password" placeholder="Password">
-                    <div style="width: 80%; text-align: left;">
+                    <div style="width: 80%; text-align: left; font-size: 14px;">
                             <a onclick="alert('Not implemented!')" href="">I forgot my password</a>
                     </div>
                 </div>
