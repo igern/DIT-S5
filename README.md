@@ -7,5 +7,6 @@ Required packages:
 * multer
 * socketio
 * jsonwebtoken
+* cors
 
 This will be updated as the project progresses..
