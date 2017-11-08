@@ -4,22 +4,147 @@
     <!-- Basics -->
     <title>DIT-S5</title>
     <style>
-      html, body {
-        background-color: #ededed !important;
+        :root {
+            --rounding: 10px;
+        }
 
-      }
-      
+        body {
+            padding: 0;
+            margin: 0;
+            background-color: #ededed;
+        }
+
+        .container {
+            width: 650px;
+            height: 400px;
+
+            background-color: #fff;
+            margin: auto;
+
+            border-radius: var(--rounding);
+            border: 1px solid #000;
+        }
+
+        .info-container {
+            width: 299px;
+            height: 100%;
+
+            border-right-style: solid;
+            border-color: black;
+            border-width: 1px;
+            
+            float: left;
+            
+            border-radius: var(--rounding) 0px 0px var(--rounding);
+        }
+
+        .img-max {
+            width: 100px;
+            height: 100px;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: 50% 50%;
+        }
+
+        .action-container {
+            width: 350px;
+            height: 100%;
+            float: left;
+            position: relative;
+
+            border-radius: 0px var(--rounding) var(--rounding) 0px;
+        }
+
+        .tab-bar {
+            position: relative;
+            top: 0;
+            width: 100%;
+            text-align: center;
+            display: flex;
+
+            border-radius: 0px var(--rounding) 0px 0px;
+        }
+
+        .tab {
+            height: 30px;
+            padding-top: 15px;
+            flex: 1 1 auto;
+        }
+
+        .footer{
+            position: relative;
+            bottom: 0;
+            width: 100%;
+            position: absolute;
+            text-align: center;
+
+            border-radius: 0px 0px var(--rounding) 0px;
+        }
+
+        .clickable {
+            cursor: pointer;
+            -webkit-user-select: none;  
+            -moz-user-select: none;    
+            -ms-user-select: none;      
+            user-select: none;
+        }
+
+        .active-tab {
+            border-bottom-style: solid;
+            border-color: #3498DB;
+            border-width: 2px;
+        }
+
+        .button {
+            height: 15px;
+            width: 80%;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border: 2px solid #3498DB;
+            text-align: center;
+
+            -webkit-transition-duration: 0.4s; /* Safari */
+            transition-duration: 0.4s;
+        }
+
+        .button:hover {
+            background-color: #3498DB; /* Green */
+            color: white;
+        }
+
+        input[type=text], select {
+            width: 80%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        input[type=password], select {
+            width: 80%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        a {
+            text-decoration: none;
+            color: #000;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
     </style>
 
     <!-- Meta -->
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap 4 -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
 
     <!-- Socket.IO 2 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
@@ -31,55 +156,76 @@
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 </head>
 <body>
-    <div id="container" class="container">
-        <div class="row h-100">
-            <div class="col-4"></div>
-            <div class="col-4">
-                <div id="card" class="animated slideInLeft card text-black bg-default">
-                    <div class="card-body">
-                        <h3 class="card-title" style="text-align: center; margin-top: 15px;">DIT-S5</h3>
+        <div id="container" class="container">
+            <div class="info-container">
+            </div>
 
-                        <p class="card-text">
-                            <form>
-                              <input style="margin-top: 35px;" id="username" type="text" class="form-control" name="username" placeholder="Username">
-                              <input style="margin-top: 15px;"type="password" class="form-control" id="password" placeholder="Password">
-                            </form>
-                        </p>
+            <div class="action-container">
+                <div class="tab-bar">
+                    <div onclick="activateSignInTab()" id="signInTab" class="clickable tab">Sign-in</div>
+                    <div onclick="activateRegisterTab()" id="registerTab" class="clickable tab">Register</div>
+                </div>
 
-                        <button onclick="signIn()" type="button" class="btn btn-primary btn-block" style="margin-top: 40px; margin-bottom: 20px;">Sign-in</button>
+                <div style="margin-top: 75px;" align="center">
+                    <input id="username" type="text" placeholder="Username">
+                    <input id="password" type="password" placeholder="Password">
+                    <div style="width: 80%; text-align: left;">
+                            <a onclick="alert('Not implemented!')" href="">I forgot my password</a>
                     </div>
+                </div>
+
+                <div class="clickable footer">
+                    <div align="center">
+                            <div class="button" onclick='signIn()'>
+                                    Sign-in
+                            </div>
+                    </div>
+                    
                 </div>
             </div>
         </div>
-    </div>
 
-    <script>
-      var containerEle = document.getElementById('container');
-      containerEle.style.marginTop = (window.innerHeight / 2) - (315 / 2) + 'px';
+        <script>
+            window.onresize = function(event) {
+                document.getElementById('container').style.marginTop = (window.innerHeight / 2) - (400 / 2) + "px";
+            };
+            
+            $(window).resize();
 
-      window.onresize = function(event) {
-        var containerEle = document.getElementById('container');
-        containerEle.style.marginTop = (window.innerHeight / 2) - (315 / 2) + 'px';
-      };
-      
-      function signIn() {
-        var username = $("#username").val();
-        var password = $("#password").val();
+            function signIn() {
+                var username = $("#username").val();
+                var password = $("#password").val();
 
-        var result = $.ajax({
-            url: 'http://127.0.0.1:20895/auth',
-            type: 'POST',
-            headers: {
-                'username':username,
-                'password':password
+                var result = $.ajax({
+                    url: 'http://127.0.0.1:20895/auth',
+                    type: 'POST',
+                    headers: {
+                        'username':username,
+                        'password':password
+                    }
+                }).then(function(data, status, xhr) {
+                    console.log(xhr.getAllResponseHeaders());
+                });
+            
+                alert('Check console to get your token! (F12 in Chrome)');
+            };
+
+            function register() {
+                alert('Not implemented!');
             }
-        }).then(function(data, status, xhr) {
-            console.log(xhr.getAllResponseHeaders());
-        });
 
-        alert('Check console to get your token! (F12 in Chrome)');
-      };
-    </script>
+            function activateSignInTab() {
+                $("#registerTab").removeClass('active-tab');
+                $("#signInTab").addClass('active-tab');
+            }
+
+            function activateRegisterTab() {
+                $("#signInTab").removeClass('active-tab');
+                $("#registerTab").addClass('active-tab');
+            }
+
+            activateSignInTab();
+        </script>
 
     <!-- Socket Communication -->
     <script>
