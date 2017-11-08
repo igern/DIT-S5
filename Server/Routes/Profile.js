@@ -10,32 +10,39 @@ module.exports = function(app, db) {
         res.send("Call completed!");
     });
 
-    app.put('/profile', (req, ress) => {
+    app.put('/profile', (req, ress, next) => {
         (async() => {
             const client = await Database.Pool.connect();
+            var returnStatus = 200;
 
-            try {
-                client.query(Database.QueryStrings.SelectProfileByUsername, [req.headers.username], (err, res) => {
-                    if(res.rows.length > 0) {
-                        ress.status(409).send("Username is already in use!");
+            new Promise((resolve) => {
+                resolve(client.query(Database.QueryStrings.SelectProfileByUsername, [req.headers.username]));
+            })
+            .then((result) => {
+                if(returnStatus == 200) {
+                    if(result.rows.length == 0) {
+                        return client.query(Database.QueryStrings.SelectProfileByEmail, [req.headers.email]);
                     } else {
-                        client.query(Database.QueryStrings.SelectProfileByEmail, [req.headers.email], (err, res) => {
-                            if(res.rows.length > 0) {
-                                ress.status(400).send("Email is already in use!");
-                            } else {
-                                client.query(Database.QueryStrings.InsertProfile, [req.headers.username, req.headers.password, req.headers.email], (err, res) => {
-                                    ress.status(200).send("Account successfully created!");
-                                });
-                            }
-                        });
+                        returnStatus = 409;
                     }
-                });
-            } catch(err) {
-                console.log(err);
-            } finally {
-                client.release();
-            }            
-        })().catch(e => console.error(e.stack));
+                }
+            })
+            .then((result) => {
+                if(returnStatus == 200) {
+                    if(result.rows.length == 0) {
+                        client.query(Database.QueryStrings.InsertProfile, [req.headers.username, req.headers.password, req.headers.email]);
+                    } else {
+                        returnStatus = 400;
+                    }
+                }
+            })
+            .then((result) => {
+                ress.status(returnStatus).send();
+            })
+            .catch(e => console.error(e));          
+
+            client.release();
+        })().catch((e) => {});
     });
 
     app.post('/profile', (req, res) => {
