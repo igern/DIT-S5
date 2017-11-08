@@ -17,7 +17,7 @@ module.exports = function(app, db) {
             try {
                 client.query(Database.QueryStrings.SelectProfileByUsername, [req.headers.username], (err, res) => {
                     if(res.rows.length > 0) {
-                        ress.status(400).send("Username is already in use!");
+                        ress.status(409).send("Username is already in use!");
                     } else {
                         client.query(Database.QueryStrings.SelectProfileByEmail, [req.headers.email], (err, res) => {
                             if(res.rows.length > 0) {

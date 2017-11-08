@@ -29,26 +29,30 @@ module.exports = function(app, db) {
     });
 
     app.all('*', (req, res, next) => {
-        var token = req.headers.token;
-        
-        jwt.verify(token, 'secret', function(err, decoded) {
-            if(err) {
-                switch(err.name) {
-                    case 'TokenExpiredError':
-                        res.status(401).send('Token expired!');
-                        break;
+        if(req.url == '/profile' && req.method == 'PUT') {
+            next();
+        } else {
+            var token = req.headers.token;
+            
+            jwt.verify(token, 'secret', function(err, decoded) {
+                if(err) {
+                    switch(err.name) {
+                        case 'TokenExpiredError':
+                            res.status(401).send('Token expired!');
+                            break;
 
-                    case 'JsonWebTokenError':
-                        res.status(400).send('Malformed token!');
-                        break;
+                        case 'JsonWebTokenError':
+                            res.status(400).send('Malformed token!');
+                            break;
 
-                    default:
-                        res.status(400).send('Unexpected error encountered!');
-                        break;
+                        default:
+                            res.status(400).send('Unexpected error encountered!');
+                            break;
+                    }
+                } else {
+                    next();
                 }
-            } else {
-                next();
-            }
-        });
+            });
+        }
     });
 };

@@ -16,8 +16,14 @@
     <!-- Hashing Library -->
     <script src="Scripts/sha3.min.js"></script>
 
+    <!-- Toast Library -->
+    <link href="./Styles/snackbar.min.css" rel="stylesheet">
+    <link href="./Styles/material.css" rel="stylesheet">
+
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nothing+You+Could+Do" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Slab" rel="stylesheet">
 
     <!-- Style -->
     <style>
@@ -47,16 +53,18 @@
         }
 
         .info-container {
-            width: 299px;
+            width: 300px;
             height: 100%;
 
-            border-right-style: solid;
-            border-color: black;
-            border-width: 1px;
-            
             float: left;
             
             border-radius: var(--rounding) 0px 0px var(--rounding);
+
+            background: #6078EA; 
+            background: -webkit-linear-gradient(left top, #17EAD9, #6078EA); 
+            background: -o-linear-gradient(bottom right, #17EAD9, #6078EA); 
+            background: -moz-linear-gradient(bottom right, #17EAD9, #6078EA); 
+            background: linear-gradient(to bottom right, #17EAD9, #6078EA);
         }
 
         .img-max {
@@ -168,6 +176,17 @@
 <body>
         <div id="container" class="container">
             <div class="info-container">
+                <div align="center" style="padding-top: 20px">
+                    <span style="color: black; font-family: 'Nothing You Could Do', cursive; font-size: 40px;">
+                        DIT-S5
+                    </span>
+
+                    </br>
+                    
+                    <span style="color: black; font-family: 'Josefin Slab', serif; font-size: 18px;">
+                        A project for the 'Distribution and Integration Technologies' class at the University of Southern Denmark.
+                    </span>
+                </div>
             </div>
 
             <div class="action-container">
@@ -176,24 +195,51 @@
                     <div onclick="activateRegisterTab()" id="registerTab" class="clickable tab">Register</div>
                 </div>
 
-                <div style="margin-top: 75px;" align="center">
-                    <input id="username" type="text" placeholder="Username">
-                    <input id="password" type="password" placeholder="Password">
-                    <div style="width: 80%; text-align: left; font-size: 14px;">
-                            <a onclick="alert('Not implemented!')" href="">I forgot my password</a>
+                <!-- Pane that contains controls pertaining to signing in -->
+                <div id="pane-one">
+                    <div style="margin-top: 75px;" align="center">
+                        <input id="username_signin" type="text" placeholder="Username">
+                        <input id="password" type="password" placeholder="Password">
+                        <div style="width: 80%; text-align: left; font-size: 14px;">
+                                <a class="clickable" onclick="toast('Password retrieval has not been implemented!')">I forgot my password</a>
+                        </div>
+                    </div>
+
+                    <div class="footer">
+                        <div align="center">
+                                <div class="clickable button" onclick='signIn()'>
+                                        Sign-in
+                                </div>
+                        </div>
+
                     </div>
                 </div>
 
-                <div class="clickable footer">
-                    <div align="center">
-                            <div class="button" onclick='signIn()'>
-                                    Sign-in
+                <!-- Pane that contains controls pertaining to registering -->
+                <div id="pane-two">
+                        <div style="margin-top: 40px;" align="center">
+                            <input id="username_register" type="text" placeholder="Username">
+                            <input id="email" type="text" placeholder="Email">
+                            <input id="password_one" type="password" placeholder="Password">
+                            <input id="password_two" type="password" placeholder="Repeat Password">
+                        </div>
+    
+                        <div class="footer">
+                            <div align="center">
+                                    <div class="clickable button" onclick="register()">
+                                            Register
+                                    </div>
                             </div>
-                    </div>
-                    
+    
+                        </div>
                 </div>
             </div>
         </div>
+
+        
+
+        <!-- Toasting Library Script -->
+        <script src="./Scripts/snackbar.min.js"></script>
 
         <script>
             window.onresize = function(event) {
@@ -202,36 +248,100 @@
             
             $(window).resize();
 
-            function signIn() {
-                var username = $("#username").val();
-                var password = $("#password").val();
+            function toast(msg) {
+                $.snackbar({content: msg, timeout: 5000, style: "toast" });
+            }
 
+            function signIn() {
+                var username = $("#username_signin").val();
+                var password = $("#password").val();
+                
                 var result = $.ajax({
                     url: 'http://127.0.0.1:20895/auth',
                     type: 'POST',
                     headers: {
                         'username':username,
-                        'password':password
+                        'password':sha3_512(password)
+                    },
+                    statusCode: {
+                        200: function() {
+                            toast("Authentication succeeded! Check the console for your token.");
+                        },
+
+                        401: function() {
+                            toast("Authentication failed! Username and/or password was wrong.");
+                        }
                     }
                 }).then(function(data, status, xhr) {
                     console.log(xhr.getAllResponseHeaders());
                 });
-            
-                alert('Check console to get your token! (F12 in Chrome)');
             };
 
             function register() {
-                alert('Not implemented!');
+                var username = $("#username_register").val();
+                var email = $("#email").val();
+                var password_one = $("#password_one").val();
+                var password_two = $("#password_two").val();
+
+                if(username.length == 0) {
+                    console.log("Username -> " + username);
+                    toast("You need to enter a username!");
+                    return;
+                }
+
+                if(email.length == 0) {
+                    toast("You need to enter en email!");
+                    return;
+                }
+
+                if(password_one.length == 0 || password_two.length == 0) {
+                    toast("You need to enter a password!");
+                    return;
+                }
+
+                if(password_one != password_two) {
+                    toast("The passwords that you have entered do not match!");
+                    return;
+                }
+                
+                var result = $.ajax({
+                    url: 'http://127.0.0.1:20895/profile',
+                    type: 'PUT',
+                    headers: {
+                        'username':username,
+                        'email':email,
+                        'password': sha3_512(password_one)
+                    },
+                    statusCode: {
+                        200: function() {
+                            toast("Account successfully created!");
+                        },
+
+                        400: function() {
+                            toast("Email is already in use!");
+                        },
+
+                        409: function() {
+                            toast("Username is already in use!");
+                        }
+                    }
+                }).then(function(data, status, xhr) {
+                    // redirect to forum ..
+                });
             }
 
             function activateSignInTab() {
                 $("#registerTab").removeClass('active-tab');
                 $("#signInTab").addClass('active-tab');
+                $("#pane-two").css("display", "none");
+                $("#pane-one").css("display", "block");
             }
 
             function activateRegisterTab() {
                 $("#signInTab").removeClass('active-tab');
                 $("#registerTab").addClass('active-tab');
+                $("#pane-one").css("display", "none");
+                $("#pane-two").css("display", "block");
             }
 
             activateSignInTab();
@@ -247,5 +357,7 @@
         }
       });
     </script>
+
+    
 </body>
 </html>
