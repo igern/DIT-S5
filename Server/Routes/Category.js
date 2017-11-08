@@ -1,3 +1,5 @@
+var Database = require('../Database');
+
 module.exports = function(app, db) {
     app.get('/category', (req, res) => {
         console.log("category get was called!");

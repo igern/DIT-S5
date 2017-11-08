@@ -1,4 +1,5 @@
 const { Pool } = require('pg');
+const SQLStrings = require('./Queries');
 
 var config = require('./db-config.json');
 
@@ -10,4 +11,5 @@ const pool = new Pool({
     port: config.port,
 });
 
-global.database = pool;
+exports.Pool = pool;
+exports.QueryStrings = SQLStrings;

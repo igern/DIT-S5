@@ -1,3 +1,5 @@
+var Database = require('../Database');
+
 module.exports = function(app, db) {
     app.get('/post', (req, res) => {
         console.log("post get was called!");

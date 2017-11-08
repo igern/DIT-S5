@@ -1,35 +1,27 @@
 var jwt = require('jsonwebtoken');
+var Database = require('../Database');
 
 module.exports = function(app, db) {
     app.post('/auth', (req, ress) => {
         (async() => {
-            
-            const text = "SELECT * FROM profile WHERE brugernavn=$1 AND kodeord=$2";
-            const values = [req.headers.username, req.headers.password];
-    
-            const client = await global.database.connect();
+            const client = await Database.Pool.connect(); 
 
             try {
-                await client.query(text, values, (err, res) => {
-                    if(err) {
-                        console.log(err.stack);
+                await client.query(Database.QueryStrings.SelectProfileByUsernameAndPassword, [req.headers.username, req.headers.password], (err, res) => {
+                    if(res.rows.length > 0) {
+                        var token = jwt.sign({
+                            exp: Math.floor(Date.now() / 1000) + 604800, // 604800 -> 1 week
+                            data: JSON.stringify(res.rows[0].brugernavn) // role will probably be added here
+                        }, 'secret');
+                
+                        ress.set('Token', token);
+                        ress.status(200).send();
                     } else {
-                        if(res.rows.length > 0) {
-                            var token = jwt.sign({
-                                exp: Math.floor(Date.now() / 1000) + 604800, // 604800 -> 1 week
-                                data: JSON.stringify(res.rows[0].brugernavn) // role will probably be added here
-                            }, 'secret');
-                    
-                            ress.set('Response', token);
-                            ress.status(200).send();
-                        } else {
-                            ress.set('Response', '');
-                            ress.status(401).send();
-                        }
+                        ress.status(401).send();
                     }
                 });
-            } catch(e) {
-                throw e;
+            } catch(err) {
+                console.log(err);
             } finally {
                 client.release();
             }

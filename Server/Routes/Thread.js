@@ -1,3 +1,5 @@
+var Database = require('../Database');
+
 module.exports = function(app, db) {
     app.get('/thread', (req, res) => {
         console.log("thread get was called!");
