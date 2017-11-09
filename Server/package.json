@@ -1,0 +1,18 @@
+{
+  "name": "Server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "Main.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "cors": "^2.8.4",
+    "express": "^4.16.2",
+    "jsonwebtoken": "^8.1.0",
+    "main.js": "0.0.1",
+    "pg": "^7.4.0",
+    "socketio": "^1.0.0"
+  }
+}

@@ -1,5 +1,6 @@
-var jwt = require('jsonwebtoken');
+var JWT = require('jsonwebtoken');
 var Database = require('../Database');
+var Auth = require('../Authentication');
 
 module.exports = function(app, db) {
     app.post('/auth', (req, res) => {
@@ -11,10 +12,10 @@ module.exports = function(app, db) {
             Query.then(QueryResult => {
                 switch(QueryResult.rows.length) {
                     case 1:
-                        var token = jwt.sign({
+                        var token = JWT.sign({
                             exp: Math.floor(Date.now() / 1000) + 604800, // 604800 -> 1 week
-                            data: QueryResult.rows[0].brugernavn
-                        }, 'secret');
+                            data: QueryResult.rows[0].username
+                        }, Auth.Secret);
 
                         res.set('Token', token);
                         res.status(200).send();
@@ -36,7 +37,7 @@ module.exports = function(app, db) {
         } else {
             var token = req.headers.token;
             
-            jwt.verify(token, 'secret', function(err, decoded) {
+            JWT.verify(token, Auth.Secret, function(err, decoded) {
                 if(err) {
                     switch(err.name) {
                         case 'TokenExpiredError':
