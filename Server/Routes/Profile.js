@@ -1,13 +1,21 @@
-var jwt = require('jsonwebtoken');
+var JWT = require('jsonwebtoken');
 var Database = require('../Database');
 
 module.exports = function(app, db) {
     app.get('/profile', (req, res) => {
-        Database.Pool.query('SELECT * FROM Profile', (err, res) => {
-            console.log(res.rows[0]);
-        });
+        (async() => {
+            const client = await Database.Pool.connect();
 
-        res.status(200).send();
+            new Promise((resolve) => {
+                resolve(client.query(Database.QueryStrings.SelectProfileByUsername, [req.headers.username]));
+            })
+            .then((result) => {
+                res.set('Profile', JSON.stringify([result.rows[0].email, result.rows[0].username, result.rows[0].role, result.rows[0].avatar]));
+                res.status(200).send();
+            }).catch((e) => {console.error(e);});
+
+            client.release();
+        })().catch((e) => {});
     });
 
     app.put('/profile', (req, res, next) => {
@@ -46,8 +54,19 @@ module.exports = function(app, db) {
     });
 
     app.post('/profile', (req, res) => {
-        console.log("profile post was called!");
-        res.send("Call completed!");
+        (async() => {
+            const client = await Database.Pool.connect();
+
+            new Promise((resolve) => {
+                var Data = JSON.parse(req.headers.profile);
+                resolve(client.query(Database.QueryStrings.UpdateProfile, [Data[0], Data[1], Data[2], Data[3]]));
+            })
+            .then((result) => {
+                res.status(200).send();
+            }).catch(e => console.error(e));
+            
+            client.release();
+        })().catch((e) => {});
     });
 
     app.delete('/profile', (req, res) => {
@@ -55,7 +74,7 @@ module.exports = function(app, db) {
             const client = await Database.Pool.connect();
             var returnStatus = -1;
 
-            var decoded = jwt.decode(req.headers.token, {complete: true});
+            var decoded = JWT.decode(req.headers.token, {complete: true});
             var token_username = decoded.payload.data.replace('"', '').replace('"', ''); // needs to be replaced with a RegEx expression.
             var target_username = req.headers.username;
 
@@ -87,15 +106,15 @@ module.exports = function(app, db) {
             })
             .then((result) => {
                 if(returnStatus == -1) {
-                    token_role = result.rows[0].rolle;
+                    token_role = result.rows[0].role;
                     return client.query(Database.QueryStrings.SelectProfileByUsername, [target_username]);
                 }
             })
             .then((result) => {
                 if(returnStatus == -1) {
-                    target_role = result.rows[0].rolle;
+                    target_role = result.rows[0].role;
 
-                    if(token_role == 'Admin' && target_role == 'Regular') {
+                    if(token_role == 'admin' && target_role == 'regular') {
                         returnStatus = 200;
                         client.query(Database.QueryStrings.DeleteProfile, [target_username]);
                     }
