@@ -16,7 +16,7 @@ module.exports = Object.freeze({
     DeleteCategory: "DELETE FROM category WHERE id=$1",
 
     // Thread Related Queries
-    SelectThreadByParentID: "SELECT * FROM thread WHERE parent=$1",
+    SelectThreadsByParentID: "SELECT * FROM thread WHERE parent=$1",
     SelectThreadByID: "SELECT * FROM thread WHERE id=$1",
     InsertThread: "INSERT INTO thread (title, created, edited, creator, parent) VALUES ($1, NOW(), NOW(), $2, $3)",
     DeleteThread: "DELETE FROM thread WHERE id=$1",

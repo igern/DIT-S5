@@ -9,7 +9,7 @@ module.exports = function(app, db) {
             new Promise((resolve) => {
                 if(req.headers.parentid != undefined) {
                     // all threads
-                    resolve(client.query(Database.QueryStrings.SelectThreadByParentID, [req.headers.parentid]));
+                    resolve(client.query(Database.QueryStrings.SelectThreadsByParentID, [req.headers.parentid]));
                 } else if(req.headers.id != undefined) {
                     // one specific thread
                     resolve(client.query(Database.QueryStrings.SelectThreadByID, [req.headers.id]));

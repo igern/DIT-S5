@@ -33,5 +33,31 @@
         <div align="center" style="font-size: 50px;">
             FORUM GUI WILL BE IMPLEMENTED HERE    
         </div>>
+
+        <script>
+            if(typeof(Storage) !== "undefined") {
+                var token = localStorage.getItem("token");
+
+                if(token != null) {
+                    $.ajax({
+                        url: 'http://127.0.0.1:20895/auth',
+                        type: 'GET',
+                        headers: {
+                            'token':token
+                        },
+                        statusCode: {
+                            400: function() {
+                                localStorage.removeItem("token");
+                                window.open('./Index.html', '_top');
+                            }
+                        }
+                    });
+                } else {
+                    window.open('./Index.html', '_top');
+                } 
+            } else {
+                window.open('./Index.html', '_top');
+            }
+        </script>
 </body>
 </html>

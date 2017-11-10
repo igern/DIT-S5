@@ -30,6 +30,20 @@ module.exports = function(app, db) {
         })().catch((e) => { });
     });
 
+    app.get('/auth', (req, res) => {
+        (async() => {
+            switch(Token.Verify(req.headers.token)) {
+                case 'valid':
+                    res.status(200).send();
+                    break;
+
+                default:
+                    res.status(400).send();
+                    break;
+            }
+        })().catch((e) => { console.error(e); });
+    });
+
     app.all('*', (req, res, next) => {
         (async() => {
             if(req.url == '/profile' && req.method == 'PUT') {
