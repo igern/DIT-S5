@@ -1,12 +1,10 @@
-var JWT = require('jsonwebtoken');
+var Token = require('../Token');
 var Database = require('../Database');
 
 module.exports = function(app, db) {
     app.get('/thread', (req, res) => {
         (async() => {
             const client = await Database.Pool.connect();
-            var returnStatus = 200;
-            //var Data = JSON.parse(req.headers.thread);
 
             new Promise((resolve) => {
                 if(req.headers.parentid != undefined) {
@@ -18,86 +16,73 @@ module.exports = function(app, db) {
                 } else if(req.headers.creator != undefined) {
                     // every thread made by user
                 } else {
-                    returnStatus = 400; // No action defined for input.
+                    res.status(400).send();
+                    resolve(Promise.reject("No action defined for input!"));
                 }
-            })
-            .then((result) => {
+            }).then((result) => {
                 res.set('Thread', JSON.stringify(result.rows));
-                res.status(returnStatus).send();
-            }).catch((e) => {console.error(e);});
+                res.status(200).send();
+            }).catch((e) => {
+                console.error(e);
+            });
 
             client.release();
-        })().catch((e) => {});
+        })().catch((e) => { });
     });
 
     app.put('/thread', (req, res) => {
         (async() => {
-            const client = await Database.Pool.connect();
-            var returnStatus = 200;
-
-            var decoded = JWT.decode(req.headers.token, {complete: true});
-            var token_username = decoded.payload.data.replace('"', '').replace('"', ''); // needs to be replaced with a RegEx expression.
-
             var Data = JSON.parse(req.headers.thread);
+            var email = Token.ReadData(req.headers.token);
+            const client = await Database.Pool.connect();
 
             new Promise((resolve) => {
                 resolve(client.query(Database.QueryStrings.SelectCategoryByID, [Data[1]]));
-            })
-            .then((result) => {
-                if(returnStatus == 200) {
-                    if(result.rows.length == 0) {
-                        returnStatus = 409; // Category doesn't exist.
-                    }
+            }).then((result) => {
+                if(result.rows.length == 0) {
+                    res.status(409).send();
+                    return Promise.reject("Category doesn't exist!");
                 }
-            })
-            .then((result) => {
-                if(returnStatus == 200) {
-                    return client.query(Database.QueryStrings.InsertThread, [Data[0], 'test@gmail.com', Data[1]]);
-                }
-            })
-            .then((result) => {
-                res.status(returnStatus).send();
-            })
-            .catch(e => console.error(e));          
+            }).then((result) => {
+                return client.query(Database.QueryStrings.InsertThread, [Data[0], email, Data[1]]);
+            }).then((result) => {
+                res.status(200).send();
+            }).catch((e) => { 
+                console.error(e)
+            });          
 
             client.release();
-        })().catch((e) => {console.error(e);});
+        })().catch((e) => { });
     });
 
     app.post('/thread', (req, res) => {
         res.status(404).send();
-        //console.log("thread post was called!");
-        //res.send("Call completed!");
     });
 
     app.delete('/thread', (req, res) => {
         (async() => {
-            const client = await Database.Pool.connect();
-            var returnStatus = 200;
-
             var Data = JSON.parse(req.headers.thread);
-
-            var decoded = JWT.decode(req.headers.token, {complete: true});
-            var token_username = decoded.payload.data.replace('"', '').replace('"', ''); // needs to be replaced with a RegEx expression.
+            var email = Token.ReadData(req.headers.token);
+            const client = await Database.Pool.connect();
 
             new Promise((resolve) => {
-                resolve(client.query(Database.QueryStrings.SelectProfileByUsername, [token_username]));
+                resolve(client.query(Database.QueryStrings.SelectProfileByEmail, [email]));
             })
             .then((result) => {
-                if(returnStatus == 200) {
-                    var role = result.rows[0].role;
-                    if(role == 'admin') {
-                        return client.query(Database.QueryStrings.DeleteThread, [Data[0]]);
-                    } else {
-                        returnStatus = 400; // User is not an admin.
-                    }
+                if(result.rows[0].role == 'admin') {
+                    return client.query(Database.QueryStrings.DeleteThread, [Data[0]]);
+                } else {
+                    res.status(400).send();
+                    return Promise.reject("User is not an admin!");
                 }
             })
             .then((result) => {
-                res.status(returnStatus).send();
-            }).catch(e => console.error(e));          
+                res.status(200).send();
+            }).catch((e) => { 
+                console.error(e)
+            });          
 
             client.release();
-        })().catch((e) => {});
+        })().catch((e) => { });
     });
 };

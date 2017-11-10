@@ -1,23 +1,20 @@
-var JWT = require('jsonwebtoken');
+var Token = require('../Token');
 var Database = require('../Database');
-var Auth = require('../Authentication');
 
 module.exports = function(app, db) {
     app.post('/auth', (req, res) => {
         (async() => {
             const client = await Database.Pool.connect(); 
 
-            var Query = client.query(Database.QueryStrings.SelectProfileByUsernameAndPassword, [req.headers.username, req.headers.password]);
-            
-            Query.then(QueryResult => {
+            client.query(Database.QueryStrings.SelectProfileByUsernameAndPassword, [req.headers.username, req.headers.password])
+            .then(QueryResult => {
                 switch(QueryResult.rows.length) {
                     case 1:
-                        var token = JWT.sign({
+                        res.set('Token', Token.New({
                             exp: Math.floor(Date.now() / 1000) + 604800, // 604800 -> 1 week
-                            data: QueryResult.rows[0].username
-                        }, Auth.Secret);
+                            data: QueryResult.rows[0].email
+                        }));
 
-                        res.set('Token', token);
                         res.status(200).send();
                         break;
 
@@ -25,37 +22,37 @@ module.exports = function(app, db) {
                         res.status(401).send();
                         break;
                 }
-            }).catch(e => console.error(e.stack));
+            }).catch((e) => { 
+                console.error(e)
+            });
 
             client.release();
-        })().catch(e => console.error(e.stack));
+        })().catch((e) => { });
     });
 
     app.all('*', (req, res, next) => {
-        if(req.url == '/profile' && req.method == 'PUT') {
-            next();
-        } else {
-            var token = req.headers.token;
-            
-            JWT.verify(token, Auth.Secret, function(err, decoded) {
-                if(err) {
-                    switch(err.name) {
-                        case 'TokenExpiredError':
-                            res.status(401).send('Token expired!');
-                            break;
+        (async() => {
+            if(req.url == '/profile' && req.method == 'PUT') {
+                next();
+            } else {
+                switch(Token.Verify(req.headers.token)) {
+                    case 'valid':
+                        next();
+                        break;
 
-                        case 'JsonWebTokenError':
-                            res.status(400).send('Malformed token!');
-                            break;
+                    case 'expired':
+                        res.status(401).send('Token expired!');
+                        break;
 
-                        default:
-                            res.status(400).send('Unexpected error encountered!');
-                            break;
-                    }
-                } else {
-                    next();
+                    case 'malformed':
+                        res.status(400).send('Malformed token!');
+                        break;
+
+                    default:
+                        res.status(400).send('Unknown error encountered!');
+                        break;
                 }
-            });
-        }
+            }
+        })().catch((e) => { console.error(e); });
     });
 };

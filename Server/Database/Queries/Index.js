@@ -5,7 +5,7 @@ module.exports = Object.freeze({
     SelectProfileByEmail: 'SELECT * FROM profile WHERE email=$1',
     UpdateProfile: "UPDATE profile SET username=$1, password=$2, avatar=$3 WHERE email=$4",
     InsertProfile: "INSERT INTO profile (username, password, email, role) VALUES ($1, $2, $3, 'regular')",
-    DeleteProfile: "DELETE FROM profile WHERE username=$1",
+    DeleteProfile: "DELETE FROM profile WHERE email=$1",
 
     // Category Related Queries
     SelectCategoryByTitle: 'SELECT * FROM category WHERE title=$1',

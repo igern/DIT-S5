@@ -4,3 +4,5 @@ Server/Database/db-config\.json
 Server/node_modules/
 
 Server/Authentication/auth-config\.json
+
+Server/Token/auth-config\.json
