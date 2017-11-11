@@ -1,5 +1,6 @@
 var Token = require('../Token');
 var Database = require('../Database');
+var Notifier = require('../Notifications');
 
 module.exports = function(app, db) {
     app.get('/thread', (req, res) => {
@@ -77,6 +78,7 @@ module.exports = function(app, db) {
                 }
             })
             .then((result) => {
+                Notifier.AnnounceDeletedThread(Data[0]);
                 res.status(200).send();
             }).catch((e) => { 
                 console.error(e)

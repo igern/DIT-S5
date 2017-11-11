@@ -33,5 +33,15 @@ module.exports = Object.freeze({
                 io.sockets.connected[clients[i]].emit("NewCategory", JSON.stringify([title, id, color]));
             }
         }
+    },
+
+    AnnounceDeletedThread: function(id) {
+        for(i = 0; i < clients.length; i++) {
+            if(io.sockets.connected[clients[i]] == undefined) {
+                clients.splice(i, 1);
+            } else {
+                io.sockets.connected[clients[i]].emit("DeletedThread", JSON.stringify([id]));
+            }
+        }
     }
 });

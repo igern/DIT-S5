@@ -283,7 +283,7 @@ function showRecentThreads() {
             var last_reply = new Date(result[i].updated);
 
             $("#dynamic-threads").append("" + 
-                "<div onclick=\"showPostsByThreadID('" + result[i].title + "'," + result[i].id + "); showThreadPostView();\" class=\"clickable thread-detail-view\">" +
+                "<div data-threadid='" + result[i].id + "' onclick=\"showPostsByThreadID('" + result[i].title + "'," + result[i].id + "); showThreadPostView();\" class=\"clickable thread-detail-view\">" +
                     "<div class=\"thread-left-view\">" + 
                         "<div class=\"thread-view-title\">" + result[i].title + "</div>" +
                         "<div class=\"thread-view-reply\">" +
@@ -335,17 +335,20 @@ function showThreadsByCategory(cid) {
 }
 
 function deleteThread() {
+    var temp_threadid = active_threadid;
+    active_threadid = -1;
+
     if(confirm('Are you sure you wanna delete this thread?') == true) {
         $.ajax({
             url: 'http://127.0.0.1:20895/thread',
             type: 'DELETE',
             headers: {
                 'token': localStorage.getItem("token"),
-                'thread': JSON.stringify([active_threadid])
+                'thread': JSON.stringify([temp_threadid])
             }
         }).then((result) => {
             showThreadListView();
-            showRecentThreads();
+            //showRecentThreads();
         });
     }
 }
@@ -371,12 +374,19 @@ function showPostsByThreadID(title, tid) {
     active_threadid = tid;
     active_threadtitle = title;
 
-    $("#dynamic-posts").empty();
-    getPostsByThreadID(tid).then((result) => {
-        $("#dynamic-posts").append("<div id=\"post-title\" onmouseout=\"hideDeleteOption();\" onmouseover=\"showDeleteOption();\" class=\"thread-post-title\">" + title + "</div>");
-        DefaultBgColor = $("#post-title").css('background-color');
-        DefaultTitle = $("#post-title").text();
+    DefaultBgColor = '#24292E';
+    DefaultTitle = title;
 
+    $("#dynamic-posts").empty();
+    getProfileByToken().then((profile) => {
+        if(profile[1] == 'admin') {
+            $("#dynamic-posts").append("<div id=\"post-title\" onmouseout=\"hideDeleteOption();\" onmouseover=\"showDeleteOption();\" class=\"thread-post-title\">" + title + "</div>");
+        } else {
+            $("#dynamic-posts").append("<div id=\"post-title\" class=\"thread-post-title\">" + title + "</div>");
+        }
+
+        return getPostsByThreadID(tid);
+    }).then((result) => {
         for(var i = 0; i < result.length; i++) {
             queue.push(getTimeSince(new Date(result[i].created)));
             queue.push(result[i].content);
