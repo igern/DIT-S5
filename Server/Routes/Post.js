@@ -27,6 +27,8 @@ module.exports = function(app, db) {
             var email = Token.ReadData(req.headers.token);
             const client = await Database.Pool.connect();
 
+            
+
             new Promise((resolve) => {
                 resolve(client.query(Database.QueryStrings.SelectThreadByID, [Data[1]]));
             })

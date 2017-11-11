@@ -512,6 +512,7 @@
                         parsed = JSON.parse(e.getResponseHeader("category"));
                         cached_categories = parsed;
 
+                        $("#ThreadCategory").empty();
                         for(var i = 0; i < cached_categories.length; i++) {
                             $("#ThreadCategory").append($("<option></option>")
                                                 .attr('value', cached_categories[i].id)
@@ -640,6 +641,7 @@
                 }).then((result) => {
                     var id = -1;
                     var name = $("#ThreadName").val();
+                    console.log(result);
                     for(var i = 0; i < result.length; i++) {
                         if(result[i].title == name) {
                             id = result[i].id;
@@ -658,7 +660,8 @@
                 }).then((result) => {
                     $("#CategoryTitle").val('');
                     $("#CategoryInitial").val('');
-                    CloseCategoryModal();
+                    $("#thread-modal").css('display', 'none');
+                    showRecentThreads();
                 });
             }
         }
@@ -792,6 +795,38 @@
             });
         }
 
+        function deleteThread() {
+            if(confirm('Are you sure you wanna delete this thread?') == true) {
+                $.ajax({
+                    url: 'http://127.0.0.1:20895/thread',
+                    type: 'DELETE',
+                    headers: {
+                        'token': localStorage.getItem("token"),
+                        'thread': JSON.stringify([active_threadid])
+                    }
+                }).then((result) => {
+                    showThreadListView();
+                    showRecentThreads();
+                });
+            }
+        }
+
+        var DefaultBgColor, DefaultTitle;
+
+        function showDeleteOption() {
+            $("#post-title").css('background-color', '#d61414');
+            $("#post-title").text('Delete');
+            $("#post-title").addClass("clickable");
+            $("#post-title").attr('onclick', 'deleteThread();');
+        }
+
+        function hideDeleteOption() {
+            $("#post-title").css('background-color', DefaultBgColor);
+            $("#post-title").text(DefaultTitle);
+            $("#post-title").removeClass("clickable");
+            $("#post-title").attr('onclick', '');
+        }
+
         function showPostsByThreadID(title, tid) {
             var queue = [];
             active_threadid = tid;
@@ -799,13 +834,13 @@
 
             $("#dynamic-posts").empty();
             getPostsByThreadID(tid).then((result) => {
-                $("#dynamic-posts").append("<div class=\"thread-post-title\">" + title + "</div>");
+                $("#dynamic-posts").append("<div id=\"post-title\" onmouseout=\"hideDeleteOption();\" onmouseover=\"showDeleteOption();\" class=\"thread-post-title\">" + title + "</div>");
+                DefaultBgColor = $("#post-title").css('background-color');
+                DefaultTitle = $("#post-title").text();
 
                 for(var i = 0; i < result.length; i++) {
                     queue.push(getTimeSince(new Date(result[i].created)));
                     queue.push(result[i].content);
-                    //var time_since = getTimeSince(new Date(result[i].created));
-                    //var content = result[i].content;
                     getProfileByEmail(result[i].creator).then((profile) => {
 
                         $("#dynamic-posts").append("" +
@@ -964,7 +999,7 @@
 
             <div class="modal-action-container">
                 <div onclick="CloseThreadModal();" class="clickable thread-create-btn" style="float: left;">Abort</div>
-                <div onclick="createThreadWithPost();" class="clickable thread-create-btn" style="float: right;">Submit</div>
+                <div onclick="createThreadWithPost(); " class="clickable thread-create-btn" style="float: right;">Submit</div>
             </div>
         </div>
     </div>
@@ -993,7 +1028,7 @@
         <hr>
 
         <div id="dynamic-posts"></div>
-
+            
         <div id="reply-container" class="reply-container">
             <div id="reply-txt" class="reply-textcontainer">
                 <textarea id="reply-textarea" class="reply-textarea" placeholder="Post a reply.."></textarea>
