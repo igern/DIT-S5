@@ -193,7 +193,6 @@ function createThreadWithPost() {
             $("#CategoryTitle").val('');
             $("#CategoryInitial").val('');
             $("#thread-modal").css('display', 'none');
-            showRecentThreads();
         });
     }
 }
@@ -268,7 +267,6 @@ function submitPostToThread() {
             }
         }).then((result) => {
             $("#reply-textarea").val('');
-            showPostsByThreadID(active_threadtitle, active_threadid)
         });
     }
 }
@@ -283,7 +281,7 @@ function showRecentThreads() {
             var last_reply = new Date(result[i].updated);
 
             $("#dynamic-threads").append("" + 
-                "<div data-threadid='" + result[i].id + "' onclick=\"showPostsByThreadID('" + result[i].title + "'," + result[i].id + "); showThreadPostView();\" class=\"clickable thread-detail-view\">" +
+                "<div data-threadid='" + result[i].id + "' onclick=\"sendActiveThreadID('" + result[i].id + "'); showPostsByThreadID('" + result[i].title + "'," + result[i].id + "); showThreadPostView();\" class=\"clickable thread-detail-view\">" +
                     "<div class=\"thread-left-view\">" + 
                         "<div class=\"thread-view-title\">" + result[i].title + "</div>" +
                         "<div class=\"thread-view-reply\">" +
@@ -314,7 +312,7 @@ function showThreadsByCategory(cid) {
             var last_reply = new Date(result[i].updated);
 
             $("#dynamic-threads").append("" + 
-                "<div onclick=\"showPostsByThreadID('" + result[i].title + "'," + result[i].id + "); showThreadPostView();\" class=\"clickable thread-detail-view\">" +
+                "<div onclick=\"sendActiveThreadID('" + result[i].id + "'); showPostsByThreadID('" + result[i].title + "'," + result[i].id + "); showThreadPostView();\" class=\"clickable thread-detail-view\">" +
                     "<div class=\"thread-left-view\">" + 
                         "<div class=\"thread-view-title\">" + result[i].title + "</div>" +
                         "<div class=\"thread-view-reply\">" +
@@ -338,7 +336,7 @@ function deleteThread() {
     var temp_threadid = active_threadid;
     active_threadid = -1;
 
-    if(confirm('Are you sure you wanna delete this thread?') == true) {
+    if(confirm('Are you sure you want to delete this thread?') == true) {
         $.ajax({
             url: 'http://127.0.0.1:20895/thread',
             type: 'DELETE',
@@ -348,31 +346,45 @@ function deleteThread() {
             }
         }).then((result) => {
             showThreadListView();
-            //showRecentThreads();
+            sendActiveThreadID(-1);
         });
+    } else {
+        active_threadid = temp_threadid;
     }
 }
 
 var DefaultBgColor, DefaultTitle;
 
-function showDeleteOption() {
+function showDeleteThreadOption() {
     $("#post-title").css('background-color', '#d61414');
     $("#post-title").text('Delete');
     $("#post-title").addClass("clickable");
     $("#post-title").attr('onclick', 'deleteThread();');
 }
 
-function hideDeleteOption() {
+function hideDeleteThreadOption() {
     $("#post-title").css('background-color', DefaultBgColor);
     $("#post-title").text(DefaultTitle);
     $("#post-title").removeClass("clickable");
     $("#post-title").attr('onclick', '');
 }
 
+function deletePost(id, parent) {
+    $.ajax({
+        url: 'http://127.0.0.1:20895/post',
+        type: 'DELETE',
+        headers: {
+            'token': localStorage.getItem("token"),
+            'post': JSON.stringify([id, parent])
+        }
+    });
+}
+
 function showPostsByThreadID(title, tid) {
     var queue = [];
     active_threadid = tid;
     active_threadtitle = title;
+    user_role = 'regular';
 
     DefaultBgColor = '#24292E';
     DefaultTitle = title;
@@ -380,7 +392,8 @@ function showPostsByThreadID(title, tid) {
     $("#dynamic-posts").empty();
     getProfileByToken().then((profile) => {
         if(profile[1] == 'admin') {
-            $("#dynamic-posts").append("<div id=\"post-title\" onmouseout=\"hideDeleteOption();\" onmouseover=\"showDeleteOption();\" class=\"thread-post-title\">" + title + "</div>");
+            user_role = 'admin';
+            $("#dynamic-posts").append("<div id=\"post-title\" onmouseout=\"hideDeleteThreadOption();\" onmouseover=\"showDeleteThreadOption();\" class=\"thread-post-title\">" + title + "</div>");
         } else {
             $("#dynamic-posts").append("<div id=\"post-title\" class=\"thread-post-title\">" + title + "</div>");
         }
@@ -388,18 +401,34 @@ function showPostsByThreadID(title, tid) {
         return getPostsByThreadID(tid);
     }).then((result) => {
         for(var i = 0; i < result.length; i++) {
+            queue.push(result[i].id);
+            queue.push(result[i].parent);
             queue.push(getTimeSince(new Date(result[i].created)));
             queue.push(result[i].content);
 
             getProfileByEmail(result[i].creator).then((profile) => {
+                var EventID = getRandomID();
+                var PostID = queue.shift();
+                var Parent = queue.shift();
+
+                var Implant = "";
+                if(user_role == 'admin') {
+                    Implant = "<div onmouseout=\'$(\"." + EventID + "\").children().css(\"display\", \"none\");\' onmouseover=\'$(\"." + EventID + "\").children().css(\"display\", \"inline\");\' style='position: absolute; height: 20px; width: 100%;'>" +
+                              "<div class='" + EventID + "' align='center'>" +
+                              "<div onclick='deletePost(" + PostID + "," + Parent + ");' style='display: none; margin-top: -5px;' class='clickable mini-button'>Delete</div>" + 
+                              "</div>" +
+                              "</div>";
+                }
+
                 $("#dynamic-posts").append("" +
-                    "<div class=\"post-container\">" +
+                    "<div data-postid=\"" + PostID + "\" class=\"post-container\">" +
                         "<div class=\"post-details\">" +
                             "<div style=\"float:left;\">" +
                                 "<b style=\"margin-right: 10px;\">" + 
                                     profile[0].capitalize() +
                                 "</b>" + 
                             "</div>" +
+                            Implant + 
                             "<div style=\"float:right;\">" +
                                 queue.shift() + " ago" +
                             "</div>" +

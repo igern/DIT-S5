@@ -47,6 +47,7 @@ module.exports = function(app, db) {
             }).then((result) => {
                 return client.query(Database.QueryStrings.InsertThread, [Data[0], email, Data[1]]);
             }).then((result) => {
+                Notifier.AnnounceNewThread(Data[1], result.rows[0].id, Data[0], result.rows[0].created)
                 res.status(200).send();
             }).catch((e) => { 
                 console.error(e)

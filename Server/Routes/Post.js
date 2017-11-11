@@ -1,5 +1,6 @@
 var Token = require('../Token');
 var Database = require('../Database');
+var Notifier = require('../Notifications');
 
 module.exports = function(app, db) {
     app.get('/post', (req, res) => {
@@ -39,12 +40,13 @@ module.exports = function(app, db) {
                 }
             })
             .then((result) => {
-                return client.query(Database.QueryStrings.InsertPost, [Data[0], email, Data[1]]);
-            })
-            .then((result) => {
                 return client.query(Database.QueryStrings.RefreshThread, [Data[1]]);
             })
             .then((result) => {
+                return client.query(Database.QueryStrings.InsertPost, [Data[0], email, Data[1]]);                
+            })
+            .then((result) => {
+                Notifier.AnnounceNewPost(result.rows[0].parent, result.rows[0].id, result.rows[0].content, result.rows[0].created, result.rows[0].creator);
                 res.status(200).send();
             })
             .catch((e) => { 
@@ -113,6 +115,7 @@ module.exports = function(app, db) {
                 }
             })
             .then((result) => {
+                Notifier.AnnounceDeletedPost(Data[0], Data[1]);
                 res.status(200).send();
             }).catch((e) => { 
                 console.error(e)

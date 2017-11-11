@@ -104,7 +104,7 @@
                 <div class="category-header" style="margin-top: 0; margin-bottom: -10px;">Categories</div> 
                 <br>
                 
-                <div onclick="showThreadListView(); showRecentThreads();" class="clickable category-tab">
+                <div onclick="sendActiveThreadID(-1); sendActiveCategoryID('all'); showThreadListView(); showRecentThreads();" class="clickable category-tab">
                     <div class="category-icon" style="color:#24292E">
                         <i class="fa fa-globe" aria-hidden="true"></i>
                     </div>
@@ -130,7 +130,7 @@
                     getCategories().then((result) => {
                         for(i = 0; i < result.length; i++) {
                             $("#dynamic-categories").append("" + 
-                                "<div onclick=\"showThreadListView(); showThreadsByCategory(" + result[i].id + ");\" class=\"clickable category-tab\">" +
+                                "<div onclick=\"sendActiveCategoryID(" + result[i].id + "); sendActiveThreadID(-1); showThreadListView(); showThreadsByCategory(" + result[i].id + ");\" class=\"clickable category-tab\">" +
                                 "<div class=\"category-color\" style=\"background-color: " + result[i].color + ";\"></div>" +
                                 "<div class=\"category-title\">" + result[i].title + "</div>" +
                                 "</div><br>" 
@@ -230,7 +230,7 @@
     <!-- Thread Post View -->
     <div id="thread-post-view" class="thread-container">
         <div align="center">
-            <div onclick="showThreadListView();" class="clickable thread-create-btn">
+            <div onclick="sendActiveThreadID(-1); showThreadListView();" class="clickable thread-create-btn">
                 Back
             </div>
         </div>
@@ -272,6 +272,8 @@
 
     <!-- Socket Communication -->
     <script src="./Scripts/Socket.js"></script>
-
+    <script>
+        sendActiveCategoryID('all');
+    </script>
 </body>
 </html>

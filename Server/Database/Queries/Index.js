@@ -20,14 +20,14 @@ module.exports = Object.freeze({
     SelectThreadsByParentID: "SELECT * FROM thread WHERE parent=$1 ORDER BY updated DESC",
     SelectThreadByID: "SELECT * FROM thread WHERE id=$1 ORDER BY updated DESC",
     RefreshThread: 'UPDATE thread SET updated=NOW() WHERE id=$1',
-    InsertThread: "INSERT INTO thread (title, created, updated, creator, parent) VALUES ($1, NOW(), NOW(), $2, $3)",
+    InsertThread: "INSERT INTO thread (title, created, updated, creator, parent) VALUES ($1, NOW(), NOW(), $2, $3) RETURNING created, id",
     DeleteThread: "DELETE FROM thread WHERE id=$1",
 
     // Post Related Queries
     SelectPostByID: "SELECT * FROM post WHERE id=$1",
     SelectAllPosts: "SELECT * FROM post WHERE parent=$1 ORDER BY created ASC",
     UpdatePost: "UPDATE post SET content=$1, edited=NOW() WHERE id=$2",
-    InsertPost: "INSERT INTO post (created, edited, content, creator, parent) VALUES (NOW(), NOW(), $1, $2, $3)",
+    InsertPost: "INSERT INTO post (created, edited, content, creator, parent) VALUES (NOW(), NOW(), $1, $2, $3) RETURNING *",
     DeletePost: "DELETE FROM post WHERE id=$1",
     DeletePostsInThread: "DELETE FROM post WHERE parent=$1",
 });
