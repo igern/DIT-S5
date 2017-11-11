@@ -97,13 +97,11 @@
     border: 2px solid #24292E;
     text-align: center;
     -webkit-transition-duration: 0.4s;
-   /* Safari */
     transition-duration: 0.4s;
   }
   
   .button:hover {
     background-color: #24292E;
-   /* Green */
     color: white;
   }
   
@@ -164,14 +162,14 @@
   }
 
   .nav-tab-btn {
-    
+    font-size: 14px;
   font-family: 'Open Sans', sans-serif;
   background-color: #24292E;
   color: white;
   width: 200px;
   line-height:350%;
   
-  font-size: 14px;
+  
   border-right-style: solid;
   border-left-style: solid;
   border-bottom-style: none;
@@ -189,6 +187,8 @@
 }
 
 .nav-tab-dropdown-content {
+    font-size: 14px;
+    font-family: 'Open Sans', sans-serif;
   display: none;
   position: absolute;
   background-color: #ededed;
@@ -302,7 +302,6 @@
     border: 2px solid #24292E;
     text-align: center;
     -webkit-transition-duration: 0.4s;
-   /* Safari */
     transition-duration: 0.4s;
   }
   
@@ -337,7 +336,6 @@
     border-width: 1px;
     border-color: transparent;
     -webkit-transition-duration: 0.4s;
-   /* Safari */
     transition-duration: 0.4s;
   }
   
@@ -450,7 +448,6 @@
     border-color: #24292E;
     border-width: 2px;
     -webkit-transition-duration: 0.4s;
-   /* Safari */
     transition-duration: 0.4s;
   }
   
@@ -478,7 +475,6 @@
     display: inline-block;
     border-radius: 5px;
     -webkit-transition-duration: 0.4s;
-   /* Safari */
     transition-duration: 0.4s;
   }
   

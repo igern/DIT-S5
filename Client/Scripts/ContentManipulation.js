@@ -205,25 +205,32 @@ function createThreadWithPost() {
 }
 
 function getProfileByEmail(email) {
-    var parsed = null;
-    var result = $.ajax({
-        url: 'http://127.0.0.1:20895/profile',
-        type: 'GET',
-        headers: {
-            'token': localStorage.getItem("token"),
-            'email': email
-        },
-    
-        complete: function(e, xhr, settings) {
-            if(e.status == 200) {
-                parsed = JSON.parse(e.getResponseHeader("profile"));
+    if(sessionStorage.getItem(email) == null) {
+        var parsed = null;
+        var result = $.ajax({
+            url: 'http://127.0.0.1:20895/profile',
+            type: 'GET',
+            headers: {
+                'token': localStorage.getItem("token"),
+                'email': email
+            },
+        
+            complete: function(e, xhr, settings) {
+                if(e.status == 200) {
+                    parsed = JSON.parse(e.getResponseHeader("profile"));
+                    sessionStorage.setItem(email, parsed);
+                }
             }
-        }
-    }).then((result) => {
-        return parsed;
-    });
+        }).then((result) => {
+            return parsed;
+        });
 
-    return result;
+        return result;
+    } else {
+        return new Promise(function(resolve, reject) {
+            resolve(sessionStorage.getItem(email).split(','));
+        });
+    }
 }
 
 function getCategoryColor(id) {
@@ -379,8 +386,8 @@ function showPostsByThreadID(title, tid) {
         for(var i = 0; i < result.length; i++) {
             queue.push(getTimeSince(new Date(result[i].created)));
             queue.push(result[i].content);
-            getProfileByEmail(result[i].creator).then((profile) => {
 
+            getProfileByEmail(result[i].creator).then((profile) => {
                 $("#dynamic-posts").append("" +
                     "<div class=\"post-container\">" +
                         "<div class=\"post-details\">" +
