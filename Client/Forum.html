@@ -32,10 +32,6 @@
     <link href="./Styles/IndexTheme.css" rel="stylesheet">
 
     <style>
-        .body {
-
-        }
-
         .nav-container {
             width: 100%;
             height: 50px;
@@ -185,6 +181,9 @@
             border-style: solid;
             border-width: 1px;
             border-color: transparent;
+
+            -webkit-transition-duration: 0.4s; /* Safari */
+            transition-duration: 0.4s;
         }
         
         .thread-detail-view:hover {
@@ -252,6 +251,125 @@
         .post-content {
             margin-top: 15px; font-size: 14px; margin-bottom: 20px;
         }
+
+        .reply-textarea {
+            padding: 5px;
+            border-style: solid; 
+            border-color: #24292E; 
+            border-width: 2px; 
+            width:100%; 
+            height: 50px; 
+            resize: none;
+            border-radius: 10px 0px 0px 10px; 
+            float: left;
+        }
+
+        .reply-textarea::-webkit-input-placeholder {
+            line-height: 160%;
+            text-align: center;
+            font-size: 30px;
+        }
+
+        .reply-textcontainer {
+            position: relative; 
+            z-index: 1;
+            float:left; 
+            height: 100%;
+        }
+
+        .reply-btn {
+            text-align: center; 
+            font-size: 30px; 
+            line-height: 200%; 
+            position: relative; 
+            z-index: 0;
+            margin-left: -5px; 
+            float:left; 
+            height:60px; 
+            border-radius: 0px 10px 10px 0px; 
+            border-right-style: solid; 
+            border-bottom-style: solid; 
+            border-top-style: solid; 
+            border-color:#24292E; 
+            border-width: 2px;
+
+            -webkit-transition-duration: 0.4s; /* Safari */
+            transition-duration: 0.4s;
+        }
+
+        .reply-btn:hover {
+            background-color: #24292E;
+            color: #ededed;
+        }
+
+        .reply-container {
+            white-space: nowrap; 
+            height: 62px; 
+            margin-top: 15px;
+            margin-bottom: 30px;
+        }
+
+        .mini-button {
+            border-style: solid; 
+            border-color:#24292E; 
+            border-width: 1px; 
+            font-size: 12px; 
+            margin-top: 15px; 
+            padding: 2px; 
+            padding-left: 5px; 
+            padding-right: 5px; 
+            display: inline-block; 
+            border-radius: 5px;
+
+            -webkit-transition-duration: 0.4s; /* Safari */
+            transition-duration: 0.4s;
+        }
+
+        .mini-button:hover {
+            background-color: #24292E;
+            color: #ededed;
+        }
+
+        .modal {
+            display: none;
+            position: fixed; 
+            z-index: 1; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgb(0,0,0); 
+            background-color: rgba(0,0,0,0.4); 
+        }
+
+        .modal-content {
+            background-color: #ededed;
+            margin: 15% auto;
+            border: 1px solid #24292E;
+            border-radius: 10px;
+            width: 50%; 
+        }
+
+        .modal-header-container {
+            padding: 10px;
+            border-color: #24292E;
+            border-width: 1px;
+            border-bottom-style: solid;
+        }
+
+        .modal-input-container {
+            padding: 10px;
+            height: 200px;
+        }
+
+        .modal-action-container {
+            padding: 10px;
+            height: 33px;
+            border-color: #24292E;
+            border-width: 1px;
+            border-top-style: solid;
+        }
     </style>
 </head>
 <body>
@@ -288,10 +406,61 @@
         String.prototype.capitalize = function() {
             return this.charAt(0).toUpperCase() + this.slice(1);
         }
+
+        function getTimeSince(date) {
+            var time = Math.floor((new Date() - date) / 1000);
+            var since = null;   
+            if(time < 60) {
+                if(time > 1) {
+                    return time + " seconds";
+                } else {
+                    return time + " second";
+                }
+            } else if (time >= 60 && time < 3600) {
+                since = Math.floor(time / 60);
+                if(since > 1) {
+                    return since + " minutes";
+                } else {
+                    return since + " minute";
+                }
+            } else if (time >= 3600 && time < 86400) {
+                since = Math.floor(time / 3600);
+                if(since > 1) {
+                    return since + " hours";
+                } else {
+                    return since + " hour";
+                }
+            } else if (time >= 86400 && time < 2592000) {
+                since = Math.floor(time / 86400);
+                if(since > 1) {
+                    return since + " days";
+                } else {
+                    return since + " day";
+                }
+            } else if (time >= 2592000 && time < 31104000) {
+                since = Math.floor(time / 2592000);
+                if(since > 1) {
+                    return since + " months";
+                } else {
+                    return since + " month";
+                }
+            } else if (time >= 31104000) {
+                since = Math.floor(time / 31104000);
+                if(since > 1) {
+                    return since + " years";
+                } else {
+                    return since + " year";
+                }
+            } else {
+                return "error";
+            }
+        }
     </script>
 
     <script>
         var cached_categories = null;
+        var active_threadid = -1;
+        var active_threadtitle = null;
 
         function showThreadListView() {
             $("#dynamic-posts").empty();
@@ -302,6 +471,10 @@
         function showThreadPostView() {
             $("#thread-list-view").css('display', 'none');
             $("#thread-post-view").css('display', 'block');
+        }
+
+        function setActiveThreadID(id) {
+            active_threadid = id;
         }
 
         function getProfileByToken() {
@@ -338,6 +511,12 @@
                     if(e.status == 200) {
                         parsed = JSON.parse(e.getResponseHeader("category"));
                         cached_categories = parsed;
+
+                        for(var i = 0; i < cached_categories.length; i++) {
+                            $("#ThreadCategory").append($("<option></option>")
+                                                .attr('value', cached_categories[i].id)
+                                                .text(cached_categories[i].title));
+                        }
                     }
                 }
             }).then((result) => {
@@ -345,6 +524,36 @@
             });
 
             return result;
+        }
+
+        function createCategory() {
+            if($("#CategoryName").val().length < 1) {
+                alert("The category name needs to be at least 1 char!");
+            } else {
+                var result = $.ajax({
+                    url: 'http://127.0.0.1:20895/category',
+                    type: 'PUT',
+                    headers: {
+                        'token': localStorage.getItem("token"),
+                        'title': $("#CategoryName").val(),
+                        'color': $("#CategoryColor").val()
+                    }
+                }).then((result) => {
+                    $("#CategoryTitle").val('');
+                    CloseCategoryModal();
+                    $("#dynamic-categories").empty();
+                    getCategories().then((result) => {
+                        for(i = 0; i < result.length; i++) {
+                            $("#dynamic-categories").append("" + 
+                                "<div onclick=\"showThreadListView(); showThreadsByCategory(" + result[i].id + ");\" class=\"clickable category-tab\">" +
+                                "<div class=\"category-color\" style=\"background-color: " + result[i].color + ";\"></div>" +
+                                "<div class=\"category-title\">" + result[i].title + "</div>" +
+                                "</div><br>" 
+                            );
+                        }
+                    });
+                });
+            }
         }
 
         function getRecentThreads() {
@@ -412,6 +621,48 @@
             return result;
         }
 
+        function createThreadWithPost() {
+            if($("#ThreadName").val().length < 10) {
+                alert("The thread name needs to be at least 10 chars!");
+            } else if($("#ThreadInitial").val().length < 10) {
+                alert("The initial post content needs to be at least 10 chars!");
+            } else {
+                console.log([$("#ThreadName").val(), $("#ThreadCategory").val()]);
+                var result = $.ajax({
+                    url: 'http://127.0.0.1:20895/thread',
+                    type: 'PUT',
+                    headers: {
+                        'token': localStorage.getItem("token"),
+                        'thread': JSON.stringify([$("#ThreadName").val(), $("#ThreadCategory").val()])
+                    }
+                }).then((result) => {
+                    return getRecentThreads();
+                }).then((result) => {
+                    var id = -1;
+                    var name = $("#ThreadName").val();
+                    for(var i = 0; i < result.length; i++) {
+                        if(result[i].title == name) {
+                            id = result[i].id;
+                            break;
+                        }
+                    }
+
+                    return $.ajax({
+                        url: 'http://127.0.0.1:20895/post',
+                        type: 'PUT',
+                        headers: {
+                            'token': localStorage.getItem("token"),
+                            'post': JSON.stringify([$("#ThreadInitial").val(), id])
+                        }
+                    });
+                }).then((result) => {
+                    $("#CategoryTitle").val('');
+                    $("#CategoryInitial").val('');
+                    CloseCategoryModal();
+                });
+            }
+        }
+
         function getProfileByEmail(email) {
             var parsed = null;
             var result = $.ajax({
@@ -462,58 +713,29 @@
             return "Unknown";
         }
 
-        function getTimeSince(date) {
-            var time = Math.floor((new Date() - date) / 1000);
-            var since = null;
-
-            if(time < 60) {
-                if(time > 1) {
-                    return time + " seconds";
-                } else {
-                    return time + " second";
-                }
-            } else if (time >= 60 && time < 3600) {
-                since = Math.floor(time / 60);
-                if(since > 1) {
-                    return since + " minutes";
-                } else {
-                    return since + " minute";
-                }
-            } else if (time >= 3600 && time < 86400) {
-                since = Math.floor(time / 3600);
-                if(since > 1) {
-                    return since + " hours";
-                } else {
-                    return since + " hour";
-                }
-            } else if (time >= 86400 && time < 2592000) {
-                since = Math.floor(time / 86400);
-                if(since > 1) {
-                    return since + " days";
-                } else {
-                    return since + " day";
-                }
-            } else if (time >= 2592000 && time < 31104000) {
-                since = Math.floor(time / 2592000);
-                if(since > 1) {
-                    return since + " months";
-                } else {
-                    return since + " month";
-                }
-            } else if (time >= 31104000) {
-                since = Math.floor(time / 31104000);
-                if(since > 1) {
-                    return since + " years";
-                } else {
-                    return since + " year";
-                }
+        function submitPostToThread() {
+            if($("#reply-textarea").val().length < 10) {
+                alert("Your reply needs to be at least 10 chars!");
             } else {
-                return "error";
+                var result = $.ajax({
+                    url: 'http://127.0.0.1:20895/post',
+                    type: 'PUT',
+                    headers: {
+                        'token': localStorage.getItem("token"),
+                        'post': JSON.stringify([$("#reply-textarea").val(), active_threadid])
+                    }
+                }).then((result) => {
+                    $("#reply-textarea").val('');
+                    showPostsByThreadID(active_threadtitle, active_threadid)
+                });
             }
         }
 
         function showRecentThreads() {
             $("#dynamic-threads").empty();
+            active_threadid = -1;
+            active_threadtitle = null;
+
             getRecentThreads().then((result) => {
                 for(var i = 0; i < result.length; i++) {
                     var last_reply = new Date(result[i].updated);
@@ -542,6 +764,9 @@
 
         function showThreadsByCategory(cid) {
             $("#dynamic-threads").empty();
+            active_threadid = -1;
+            active_threadtitle = null;
+
             getThreadsByCategory(cid).then((result) => {
                 for(var i = 0; i < result.length; i++) {
                     var last_reply = new Date(result[i].updated);
@@ -569,6 +794,9 @@
 
         function showPostsByThreadID(title, tid) {
             var queue = [];
+            active_threadid = tid;
+            active_threadtitle = title;
+
             $("#dynamic-posts").empty();
             getPostsByThreadID(tid).then((result) => {
                 $("#dynamic-posts").append("<div class=\"thread-post-title\">" + title + "</div>");
@@ -585,7 +813,7 @@
                                 "<div class=\"post-details\">" +
                                     "<div style=\"float:left;\">" +
                                         "<b style=\"margin-right: 10px;\">" + 
-                                            profile[0] +
+                                            profile[0].capitalize() +
                                         "</b>" + 
                                     "</div>" +
                                     "<div style=\"float:right;\">" +
@@ -624,6 +852,7 @@
         </div>
     </div>
 
+    <!-- Category Sidebar -->
     <div class="category-container">
         <div align="right" style="margin-right: 50px;">
             <div align="left" style="display: inline-block;">
@@ -663,7 +892,79 @@
                             );
                         }
                     });
+
+                    getProfileByToken().then((result) => {
+                        if(result[1] == 'admin') {
+                            $("#dynamic-categories").after("" +
+                                "<div onclick=\"$('#category-modal').css('display', 'block');\" class=\"clickable mini-button\">" +
+                                    "Add Category" +
+                                "</div>"
+                            );
+                        }
+                    });
                 </script>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Category Modal -->
+    <div id="category-modal" class="modal">
+        <script>
+            function CloseCategoryModal() {
+                $("#CategoryName").val('');
+                $("#category-modal").css('display', 'none');
+            }    
+        </script>
+        
+        <div class="modal-content">
+            <div class="modal-header-container">
+                <b>Add Category</b>
+            </div>
+
+            <div class="modal-input-container" style="height: 200px;">
+                <b>Pick name for category:</b> <br>
+                <input id="CategoryName" type="text" placeholder="Name of category">
+                <br><br>
+                <b>Pick color for category:</b> <br>
+                <input id="CategoryColor" type="color" value="#24292E">
+            </div>
+
+            <div class="modal-action-container">
+                <div onclick="CloseCategoryModal();" class="clickable thread-create-btn" style="float: left;">Abort</div>
+                <div onclick="createCategory();" class="clickable thread-create-btn" style="float: right;">Submit</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Start Thread Modal -->
+    <div id="thread-modal" class="modal">
+        <script>
+            function CloseThreadModal() {
+                $("#ThreadName").val('');
+                $("#ThreadInitial").val('');
+                $("#thread-modal").css('display', 'none');
+            }    
+        </script>
+
+        <div class="modal-content">
+            <div class="modal-header-container">
+                <b>Start Thread</b>
+            </div>
+
+            <div class="modal-input-container" style="height: 400px;">
+                <b>Name for thread:</b> <br>
+                <input id="ThreadName" type="text" placeholder="Name of thread">
+                <br><br>
+                <b>Category for thread:</b> <br>
+                <select id="ThreadCategory"></select>
+                <br><br>
+                <b>Text for initial post:</b> <br>
+                <textarea style="margin-top: 10px; resize: none; width: 80%; height: 100px;" id="ThreadInitial" placeholder="Initial text"></textarea>
+            </div>
+
+            <div class="modal-action-container">
+                <div onclick="CloseThreadModal();" class="clickable thread-create-btn" style="float: left;">Abort</div>
+                <div onclick="createThreadWithPost();" class="clickable thread-create-btn" style="float: right;">Submit</div>
             </div>
         </div>
     </div>
@@ -671,7 +972,7 @@
     <!-- Thread List View -->
     <div id="thread-list-view" class="thread-container">
         <div align="center">
-            <div onclick="toast('The \'Start Thread\' view has not been implemented yet!')" class="clickable thread-create-btn">
+            <div onclick="$('#thread-modal').css('display', 'block');" class="clickable thread-create-btn">
                 Start Thread
             </div>
         </div>
@@ -679,18 +980,6 @@
         <hr>
 
         <div id="dynamic-threads"></div>
-
-        <!--<div class="clickable thread-detail-view">
-            <div class="thread-left-view">
-                <div class="thread-view-title">En lille stil</div>
-                <div class="thread-view-reply">Last reply was x time ago</div>
-            </div>
-            <div class="thread-right-view">
-                <div class="thread-force-right">
-                    <div class="thread-pill" style="background-color: blue;">Category</div>
-                </div>
-            </div>
-        </div>-->
     </div>
 
     <!-- Thread Post View -->
@@ -705,27 +994,26 @@
 
         <div id="dynamic-posts"></div>
 
-        <!--
-        <div class="thread-post-title">
-            Lorem ipsum sit doler amet?
-        </div>
-
-        <div class="post-container" style="width:100%; border-color: #c9c7c7; border-width: 1px; border-bottom-style: solid; ">
-            <div class="post-details" style="font-size: 14px;">
-                <div style="float:left; width: 10%;">
-                    <b style="margin-right: 10px;">Testbruger</b>
-                </div>
-
-                <div style="float:right; width: 10%;">
-                    1 minute ago
-                </div>
+        <div id="reply-container" class="reply-container">
+            <div id="reply-txt" class="reply-textcontainer">
+                <textarea id="reply-textarea" class="reply-textarea" placeholder="Post a reply.."></textarea>
             </div>
-            <br>
-            <div class="post-content" style="margin-top: 15px; font-size: 14px; margin-bottom: 20px;">
-                Ladidadadadadadada
+            <div onclick="submitPostToThread();" id="reply-btn" class="clickable reply-btn">
+                Send
             </div>
+
+            <script>
+                window.onresize = function(event) {
+                    var width = window.innerWidth * 0.5;
+                    $("#reply-container").css('width', width + 'px');
+                    $("#reply-txt").css('width', (width * 0.8) + 'px');
+                    $("#reply-btn").css('width', (width * 0.2) + 'px');
+                };
+
+                $(window).trigger('resize');
+            </script>
         </div>
-        -->
+        
 
     </div>
 
@@ -734,8 +1022,8 @@
         showThreadListView();
     </script>
 
-        <!-- Toasting Library Script -->
-        <script src="./Scripts/snackbar.min.js"></script>
+    <!-- Toasting Library Script -->
+    <script src="./Scripts/snackbar.min.js"></script>
 
 </body>
 </html>

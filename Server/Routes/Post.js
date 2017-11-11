@@ -40,6 +40,9 @@ module.exports = function(app, db) {
                 return client.query(Database.QueryStrings.InsertPost, [Data[0], email, Data[1]]);
             })
             .then((result) => {
+                return client.query(Database.QueryStrings.RefreshThread, [Data[1]]);
+            })
+            .then((result) => {
                 res.status(200).send();
             })
             .catch((e) => { 

@@ -24,6 +24,8 @@ module.exports = function(app, db) {
             var email = Token.ReadData(req.headers.token);
             const client = await Database.Pool.connect();
 
+            console.log(req.headers.title + " - " + req.headers.color);
+
             new Promise((resolve) => {
                 resolve(client.query(Database.QueryStrings.SelectCategoryByTitle, [req.headers.title]));
             }).then((result) => {

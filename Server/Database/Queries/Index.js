@@ -19,6 +19,7 @@ module.exports = Object.freeze({
     SelectThreadsByRecentActivity: "SELECT * FROM thread ORDER BY updated DESC LIMIT 20",
     SelectThreadsByParentID: "SELECT * FROM thread WHERE parent=$1",
     SelectThreadByID: "SELECT * FROM thread WHERE id=$1",
+    RefreshThread: 'UPDATE thread SET updated=NOW() WHERE id=$1',
     InsertThread: "INSERT INTO thread (title, created, updated, creator, parent) VALUES ($1, NOW(), NOW(), $2, $3)",
     DeleteThread: "DELETE FROM thread WHERE id=$1",
 
