@@ -104,26 +104,3 @@ function activateRegisterTab() {
 }
 
 activateSignInTab();
-
-if(typeof(Storage) !== "undefined") {
-    var token = localStorage.getItem("token");
-
-    if(token != null) {
-        $.ajax({
-            url: 'http://127.0.0.1:20895/auth',
-            type: 'GET',
-            headers: {
-                'token':token
-            },
-            statusCode: {
-                200: function() {
-                    window.open('./Forum.html', '_top');
-                },
-    
-                400: function() {
-                    localStorage.removeItem("token");
-                }
-            }
-        });
-    }
-}

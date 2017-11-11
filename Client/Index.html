@@ -26,9 +26,35 @@
     <link href="https://fonts.googleapis.com/css?family=Josefin+Slab" rel="stylesheet">
 
     <!-- Theme -->
-    <link href="./Styles/IndexTheme.css" rel="stylesheet">
+    <link href="./Styles/Theme.css" rel="stylesheet">
 </head>
 <body>
+    <!-- Token Authentication -->
+    <script>
+        if(typeof(Storage) !== "undefined") {
+            var token = localStorage.getItem("token");
+            
+            if(token != null) {
+                $.ajax({
+                    url: 'http://127.0.0.1:20895/auth',
+                    type: 'GET',
+                    headers: {
+                        'token':token
+                    },
+                    statusCode: {
+                        200: function() {
+                            window.open('./Forum.html', '_top');
+                        },
+                    
+                        400: function() {
+                            localStorage.removeItem("token");
+                        }
+                    }
+                });
+            }
+        }
+    </script>
+    
         <!-- Container for the entire sign-in / registration GUI -->
         <div id="container" class="container">
             <!-- Container for the information about the project -->
