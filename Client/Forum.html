@@ -56,6 +56,11 @@
         } else {
             window.open('./Index.html', '_top');
         }
+
+        function signOut() {
+            localStorage.removeItem("token");
+            window.open('./Index.html', '_top');
+        }
     </script>
 
     <!-- Helper Functions -->
@@ -74,14 +79,22 @@
                 </div>
             </div>
 
-            <div id="profile-tab" onclick="toast('Profile view is not yet implemented!')" class="clickable nav-tab" style="right: 0;">
-                <script>
-                    getProfileByToken().then((result) => {
-                        $("#profile-tab").html(result[0].capitalize());
-                    });
-                </script>
+            <div style="float: right">
+                <div class="nav-tab-dropdown">
+                        <button id="profile-btn" class="nav-tab-btn"> 
+                            <script>
+                                getProfileByToken().then((result) => {
+                                    $("#profile-btn").html(result[0].capitalize() + "<i style='margin-left: 10px;' class='fa fa-chevron-circle-down' aria-hidden='true'></i>");
+                                });
+                            </script>
+                        </button>
+                        <div class="nav-tab-dropdown-content">
+                            <a class="clickable" onclick="toast('Profile viewing is not implemented!')">View profile</a>
+                            <a class="clickable" onclick="signOut();">Sign out</a>
+                        </div>
+                      </div>
+                </div>
             </div>
-        </div>
     </div>
 
     <!-- Category Sidebar -->
