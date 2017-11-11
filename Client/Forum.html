@@ -25,39 +25,717 @@
     <link href="https://fonts.googleapis.com/css?family=Nothing+You+Could+Do" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Josefin+Slab" rel="stylesheet">
 
+    <!-- Font Awesome -->
+    <script src="https://use.fontawesome.com/428a9344d1.js"></script>
+
     <!-- Theme -->
     <link href="./Styles/IndexTheme.css" rel="stylesheet">
+
+    <style>
+        .body {
+
+        }
+
+        .nav-container {
+            width: 100%;
+            height: 50px;
+
+            background-color: #24292E;
+        }
+
+        .nav-bar {
+            position: relative;
+            left: 25%;
+            width: 50%;
+            height: 100%;
+        }
+
+        .nav-tab {
+            width: 200px;
+            height: 100%;
+            line-height: 350%;
+            color: #ededed;
+            position: absolute; 
+            text-align:center;
+            font-size: 14px;
+
+            border-right-style: solid;
+            border-left-style: solid;
+            border-color: rgb(73, 81, 92);
+            border-width: .1px;
+        }
+
+        .notification-counter {
+            height: 25px;
+            width: 30px;
+            line-height: 190%;
+            border-radius: 5px;
+            background-color: #ededed;
+            color: #24292E;
+            float: left;
+        }
+
+        .category-container {
+            margin-top: 70px;
+            width: 15%;
+            left: 9%;
+            position: fixed;
+
+            border-color: #acacac;
+            border-width: .1px;
+            border-right-style: solid;
+            white-space: nowrap;
+        }
+
+        .category-header {
+            font-size: 14px;
+            font-weight: bold;
+            white-space: nowrap;
+            margin-top: 5px;
+            cursor: default;
+            
+            -webkit-user-select: none;  
+            -moz-user-select: none;    
+            -ms-user-select: none;      
+            user-select: none;
+        }
+
+        .category-tab {
+            font-size: 14px;
+            font-weight: bold;
+            white-space: nowrap;
+            margin-top: 5px;
+        }
+
+        .category-tab:hover {
+            color: rgb(168, 166, 166);
+        }
+
+        .category-color {
+            height: 15px;
+            width: 15px;
+            line-height: 200%;
+            border-radius: 15px;
+            margin-right: 10px;
+            float: left;
+        }
+
+        .category-icon {
+            height: 15px;
+            width: 15px;
+            line-height: 120%;
+            float: left;
+            margin-right: 10px;
+        }
+
+        .category-title {
+            line-height: 120%;
+            float:left;
+        }
+
+        .thread-container {
+            position: relative;
+            top: 20px;
+            width: 50%;
+            left: 25%;
+        }
+
+        .thread-create-btn {
+            height: 10px;
+            width: 200px;
+            padding-top: 5px;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border: 2px solid #24292E;
+            text-align: center;
+
+            -webkit-transition-duration: 0.4s; /* Safari */
+            transition-duration: 0.4s;
+        }
+
+        .thread-create-btn:hover {
+            background-color: #24292E;
+            color: white;
+        }
+
+        .thread-pill {
+            margin-top: 11px;
+            height: 15px;
+            padding-left: 5px;
+            padding-right: 5px;
+            line-height: 125%;
+            background-color: #24292E;
+            color: #fff;
+            border-radius: 5px;
+            font-size: 12px;
+            margin-right: 10px;
+            float: left;
+        }
+
+        .thread-detail-view {
+            padding: 1%;
+            width: 98%;
+            height: 38px;
+            background-color: #dfdede;
+            border-radius: 7.5px;
+            margin-left: -1px;
+            margin-top: 10px;
+
+            border-style: solid;
+            border-width: 1px;
+            border-color: transparent;
+        }
+        
+        .thread-detail-view:hover {
+            border-style: solid;
+            border-width: 1px;
+            border-color: #000;
+        }
+
+        .thread-left-view {
+            position: relative; 
+            float:left; 
+            width: 50%; 
+            height: 100%;
+        }
+
+        .thread-right-view {
+            position: relative; 
+            float:right; 
+            width: 50%; 
+            height: 100%;
+        }
+
+        .thread-force-right {
+            position: absolute; 
+            right: 0; 
+            line-height: 300%;
+        }
+
+        .thread-view-title {
+            font-size: 14px;
+        }
+
+        .thread-view-reply {
+            font-size: 12px;
+        }
+
+        .thread-post-title {
+            margin-top: 0;
+            text-align: center;
+            background-color: #24292E;
+            height: 50px;
+            line-height: 150%;
+            color: #ededed;
+            font-weight: bold;
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+
+        hr {
+            margin-bottom: 0;
+        }
+
+        .post-container {
+            width: 100%;
+            border-color: #dbd7d7; 
+            border-width: 1px; 
+            border-bottom-style: solid;
+            margin-top: 5px;
+        }
+
+        .post-details {
+            font-size: 14px;
+        }
+
+        .post-content {
+            margin-top: 15px; font-size: 14px; margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
-        <!-- Container for the entire sign-in / registration GUI -->
-        <div align="center" style="font-size: 50px;">
-            FORUM GUI WILL BE IMPLEMENTED HERE    
-        </div>>
-
-        <script>
-            if(typeof(Storage) !== "undefined") {
-                var token = localStorage.getItem("token");
-
-                if(token != null) {
-                    $.ajax({
-                        url: 'http://127.0.0.1:20895/auth',
-                        type: 'GET',
-                        headers: {
-                            'token':token
-                        },
-                        statusCode: {
-                            400: function() {
-                                localStorage.removeItem("token");
-                                window.open('./Index.html', '_top');
-                            }
+    <script>
+        if(typeof(Storage) !== "undefined") {
+            var token = localStorage.getItem("token");
+            if(token != null) {
+                $.ajax({
+                    url: 'http://127.0.0.1:20895/auth',
+                    type: 'GET',
+                    headers: {
+                        'token':token
+                    },
+                    statusCode: {
+                        400: function() {
+                            localStorage.removeItem("token");
+                            window.open('./Index.html', '_top');
                         }
-                    });
-                } else {
-                    window.open('./Index.html', '_top');
-                } 
+                    }
+                });
             } else {
                 window.open('./Index.html', '_top');
+            } 
+        } else {
+            window.open('./Index.html', '_top');
+        }
+    </script>
+
+    <script>
+        function toast(msg) {
+            $.snackbar({content: msg, timeout: 5000, style: "toast" });
+        }
+
+        String.prototype.capitalize = function() {
+            return this.charAt(0).toUpperCase() + this.slice(1);
+        }
+    </script>
+
+    <script>
+        var cached_categories = null;
+
+        function showThreadListView() {
+            $("#dynamic-posts").empty();
+            $("#thread-list-view").css('display', 'block');
+            $("#thread-post-view").css('display', 'none');
+        }
+
+        function showThreadPostView() {
+            $("#thread-list-view").css('display', 'none');
+            $("#thread-post-view").css('display', 'block');
+        }
+
+        function getProfileByToken() {
+            var parsed = null;
+            var result = $.ajax({
+                url: 'http://127.0.0.1:20895/profile',
+                type: 'GET',
+                headers: {
+                    'token': localStorage.getItem("token")
+                },
+            
+                complete: function(e, xhr, settings) {
+                    if(e.status == 200) {
+                        parsed = JSON.parse(e.getResponseHeader("profile"));
+                    }
+                }
+            }).then((result) => {
+                return parsed;
+            });
+
+            return result;
+        };
+
+        function getCategories() {
+            var parsed = null;
+            var result = $.ajax({
+                url: 'http://127.0.0.1:20895/category',
+                type: 'GET',
+                headers: {
+                    'token': localStorage.getItem("token")
+                },
+            
+                complete: function(e, xhr, settings) {
+                    if(e.status == 200) {
+                        parsed = JSON.parse(e.getResponseHeader("category"));
+                        cached_categories = parsed;
+                    }
+                }
+            }).then((result) => {
+                return parsed;
+            });
+
+            return result;
+        }
+
+        function getRecentThreads() {
+            var parsed = null;
+            var result = $.ajax({
+                url: 'http://127.0.0.1:20895/thread',
+                type: 'GET',
+                headers: {
+                    'token': localStorage.getItem("token")
+                },
+            
+                complete: function(e, xhr, settings) {
+                    if(e.status == 200) {
+                        parsed = JSON.parse(e.getResponseHeader("thread"));
+                    }
+                }
+            }).then((result) => {
+                return parsed;
+            });
+
+            return result;
+        }
+
+        function getThreadsByCategory(cid) {
+            var parsed = null;
+            var result = $.ajax({
+                url: 'http://127.0.0.1:20895/thread',
+                type: 'GET',
+                headers: {
+                    'token': localStorage.getItem("token"),
+                    'parentid': cid
+                },
+            
+                complete: function(e, xhr, settings) {
+                    if(e.status == 200) {
+                        parsed = JSON.parse(e.getResponseHeader("thread"));
+                    }
+                }
+            }).then((result) => {
+                return parsed;
+            });
+
+            return result;
+        }
+
+        function getPostsByThreadID(tid) {
+            var parsed = null;
+            var result = $.ajax({
+                url: 'http://127.0.0.1:20895/post',
+                type: 'GET',
+                headers: {
+                    'token': localStorage.getItem("token"),
+                    'post': JSON.stringify([tid])
+                },
+            
+                complete: function(e, xhr, settings) {
+                    if(e.status == 200) {
+                        parsed = JSON.parse(e.getResponseHeader("post"));
+                    }
+                }
+            }).then((result) => {
+                return parsed;
+            });
+
+            return result;
+        }
+
+        function getProfileByEmail(email) {
+            var parsed = null;
+            var result = $.ajax({
+                url: 'http://127.0.0.1:20895/profile',
+                type: 'GET',
+                headers: {
+                    'token': localStorage.getItem("token"),
+                    'email': email
+                },
+            
+                complete: function(e, xhr, settings) {
+                    if(e.status == 200) {
+                        parsed = JSON.parse(e.getResponseHeader("profile"));
+                    }
+                }
+            }).then((result) => {
+                return parsed;
+            });
+
+            return result;
+        }
+
+        function getCategoryColor(id) {
+            if(cached_categories == null) {
+                return "#000";
             }
-        </script>
+
+            for(i = 0; i < cached_categories.length; i++) {
+                if(cached_categories[i].id == id) {
+                    return cached_categories[i].color;
+                }
+            }
+
+            return "#000";
+        }
+
+        function getCategoryName(id) {
+            if(cached_categories == null) {
+                return "Unknown";
+            }
+
+            for(i = 0; i < cached_categories.length; i++) {
+                if(cached_categories[i].id == id) {
+                    return cached_categories[i].title;
+                }
+            }
+
+            return "Unknown";
+        }
+
+        function getTimeSince(date) {
+            var time = Math.floor((new Date() - date) / 1000);
+            var since = null;
+
+            if(time < 60) {
+                if(time > 1) {
+                    return time + " seconds";
+                } else {
+                    return time + " second";
+                }
+            } else if (time >= 60 && time < 3600) {
+                since = Math.floor(time / 60);
+                if(since > 1) {
+                    return since + " minutes";
+                } else {
+                    return since + " minute";
+                }
+            } else if (time >= 3600 && time < 86400) {
+                since = Math.floor(time / 3600);
+                if(since > 1) {
+                    return since + " hours";
+                } else {
+                    return since + " hour";
+                }
+            } else if (time >= 86400 && time < 2592000) {
+                since = Math.floor(time / 86400);
+                if(since > 1) {
+                    return since + " days";
+                } else {
+                    return since + " day";
+                }
+            } else if (time >= 2592000 && time < 31104000) {
+                since = Math.floor(time / 2592000);
+                if(since > 1) {
+                    return since + " months";
+                } else {
+                    return since + " month";
+                }
+            } else if (time >= 31104000) {
+                since = Math.floor(time / 31104000);
+                if(since > 1) {
+                    return since + " years";
+                } else {
+                    return since + " year";
+                }
+            } else {
+                return "error";
+            }
+        }
+
+        function showRecentThreads() {
+            $("#dynamic-threads").empty();
+            getRecentThreads().then((result) => {
+                for(var i = 0; i < result.length; i++) {
+                    var last_reply = new Date(result[i].updated);
+
+                    $("#dynamic-threads").append("" + 
+                        "<div onclick=\"showPostsByThreadID('" + result[i].title + "'," + result[i].id + "); showThreadPostView();\" class=\"clickable thread-detail-view\">" +
+                            "<div class=\"thread-left-view\">" + 
+                                "<div class=\"thread-view-title\">" + result[i].title + "</div>" +
+                                "<div class=\"thread-view-reply\">" +
+                                    "Last reply was " + getTimeSince(last_reply) + " ago" +
+                                "</div>" +
+                            "</div>" +
+                            "<div class=\"thread-right-view\">" +
+                                "<div class=\"thread-force-right\">" +
+                                    "<div class=\"thread-pill\" style=\"background-color:" + getCategoryColor(result[i].parent) + ";\">" +
+                                        getCategoryName(result[i].parent) +
+                                    "</div>" +
+                                "</div>" +
+                            "</div>" +
+                        "</div>"
+                    );
+                }
+            });
+            
+        }
+
+        function showThreadsByCategory(cid) {
+            $("#dynamic-threads").empty();
+            getThreadsByCategory(cid).then((result) => {
+                for(var i = 0; i < result.length; i++) {
+                    var last_reply = new Date(result[i].updated);
+
+                    $("#dynamic-threads").append("" + 
+                        "<div onclick=\"showPostsByThreadID('" + result[i].title + "'," + result[i].id + "); showThreadPostView();\" class=\"clickable thread-detail-view\">" +
+                            "<div class=\"thread-left-view\">" + 
+                                "<div class=\"thread-view-title\">" + result[i].title + "</div>" +
+                                "<div class=\"thread-view-reply\">" +
+                                    "Last reply was " + getTimeSince(last_reply) + " ago" +
+                                "</div>" +
+                            "</div>" +
+                            "<div class=\"thread-right-view\">" +
+                                "<div class=\"thread-force-right\">" +
+                                    "<div class=\"thread-pill\" style=\"background-color:" + getCategoryColor(cid) + ";\">" +
+                                        getCategoryName(cid) +
+                                    "</div>" +
+                                "</div>" +
+                            "</div>" +
+                        "</div>"
+                    );
+                }
+            });
+        }
+
+        function showPostsByThreadID(title, tid) {
+            var queue = [];
+            $("#dynamic-posts").empty();
+            getPostsByThreadID(tid).then((result) => {
+                $("#dynamic-posts").append("<div class=\"thread-post-title\">" + title + "</div>");
+
+                for(var i = 0; i < result.length; i++) {
+                    queue.push(getTimeSince(new Date(result[i].created)));
+                    queue.push(result[i].content);
+                    //var time_since = getTimeSince(new Date(result[i].created));
+                    //var content = result[i].content;
+                    getProfileByEmail(result[i].creator).then((profile) => {
+
+                        $("#dynamic-posts").append("" +
+                            "<div class=\"post-container\">" +
+                                "<div class=\"post-details\">" +
+                                    "<div style=\"float:left;\">" +
+                                        "<b style=\"margin-right: 10px;\">" + 
+                                            profile[0] +
+                                        "</b>" + 
+                                    "</div>" +
+                                    "<div style=\"float:right;\">" +
+                                        queue.shift() + " ago" +
+                                    "</div>" +
+                                "</div>" +
+                                "<br>" +
+                                "<div class=\"post-content\">" +
+                                    queue.shift() +
+                                "</div>" +
+                            "</div>"
+                        );
+                    });
+                }
+            });
+        }
+    </script>
+
+    <!-- Navbar -->
+    <div class="nav-container">
+        <div class="nav-bar">
+            <div id="notification-tab" onclick="toast('Notifications are not yet implemented!')" class="clickable nav-tab" style="left: 0;">
+                <div style="float: left; margin-left:35px;">Notifications</div>
+                <div style="margin-left: 15px; margin-top: 12px;" class="notification-counter">
+                    0
+                </div>
+            </div>
+
+            <div id="profile-tab" onclick="toast('Profile view is not yet implemented!')" class="clickable nav-tab" style="right: 0;">
+                <script>
+                    getProfileByToken().then((result) => {
+                        $("#profile-tab").html(result[0].capitalize());
+                    });
+                </script>
+            </div>
+        </div>
+    </div>
+
+    <div class="category-container">
+        <div align="right" style="margin-right: 50px;">
+            <div align="left" style="display: inline-block;">
+                <div class="category-header" style="margin-top: 0; margin-bottom: -10px;">Categories</div> 
+                <br>
+                
+                <div onclick="showThreadListView(); showRecentThreads();" class="clickable category-tab">
+                    <div class="category-icon" style="color:#24292E">
+                        <i class="fa fa-globe" aria-hidden="true"></i>
+                    </div>
+                    <div class="category-title">
+                        All
+                    </div>
+                </div>
+                <br>
+
+                <div onclick="toast('The \'following\' view is not yet implemented!')" class="clickable category-tab">
+                    <div class="category-icon" style="color:#24292E">
+                        <i class="fa fa-star" aria-hidden="true"></i>
+                    </div>
+                    <div class="category-title">
+                        Following
+                    </div>
+                </div>
+                <br>
+
+                <div id="dynamic-categories"></div>
+
+                <script>
+                    getCategories().then((result) => {
+                        for(i = 0; i < result.length; i++) {
+                            $("#dynamic-categories").append("" + 
+                                "<div onclick=\"showThreadListView(); showThreadsByCategory(" + result[i].id + ");\" class=\"clickable category-tab\">" +
+                                "<div class=\"category-color\" style=\"background-color: " + result[i].color + ";\"></div>" +
+                                "<div class=\"category-title\">" + result[i].title + "</div>" +
+                                "</div><br>" 
+                            );
+                        }
+                    });
+                </script>
+            </div>
+        </div>
+    </div>
+
+    <!-- Thread List View -->
+    <div id="thread-list-view" class="thread-container">
+        <div align="center">
+            <div onclick="toast('The \'Start Thread\' view has not been implemented yet!')" class="clickable thread-create-btn">
+                Start Thread
+            </div>
+        </div>
+
+        <hr>
+
+        <div id="dynamic-threads"></div>
+
+        <!--<div class="clickable thread-detail-view">
+            <div class="thread-left-view">
+                <div class="thread-view-title">En lille stil</div>
+                <div class="thread-view-reply">Last reply was x time ago</div>
+            </div>
+            <div class="thread-right-view">
+                <div class="thread-force-right">
+                    <div class="thread-pill" style="background-color: blue;">Category</div>
+                </div>
+            </div>
+        </div>-->
+    </div>
+
+    <!-- Thread Post View -->
+    <div id="thread-post-view" class="thread-container">
+        <div align="center">
+            <div onclick="showThreadListView();" class="clickable thread-create-btn">
+                Back
+            </div>
+        </div>
+
+        <hr>
+
+        <div id="dynamic-posts"></div>
+
+        <!--
+        <div class="thread-post-title">
+            Lorem ipsum sit doler amet?
+        </div>
+
+        <div class="post-container" style="width:100%; border-color: #c9c7c7; border-width: 1px; border-bottom-style: solid; ">
+            <div class="post-details" style="font-size: 14px;">
+                <div style="float:left; width: 10%;">
+                    <b style="margin-right: 10px;">Testbruger</b>
+                </div>
+
+                <div style="float:right; width: 10%;">
+                    1 minute ago
+                </div>
+            </div>
+            <br>
+            <div class="post-content" style="margin-top: 15px; font-size: 14px; margin-bottom: 20px;">
+                Ladidadadadadadada
+            </div>
+        </div>
+        -->
+
+    </div>
+
+    <script>
+        showRecentThreads();
+        showThreadListView();
+    </script>
+
+        <!-- Toasting Library Script -->
+        <script src="./Scripts/snackbar.min.js"></script>
+
 </body>
 </html>

@@ -7,6 +7,7 @@ body {
     margin: 0;
     background-color: #ededed;
     font-family: 'Open Sans', sans-serif;
+    color: #24292E;
 }
 
 .container {
@@ -31,11 +32,11 @@ body {
     
     border-radius: var(--rounding) 0px 0px var(--rounding);
 
-    background: #6078EA; 
-    background: -webkit-linear-gradient(left top, #17EAD9, #6078EA); 
-    background: -o-linear-gradient(bottom right, #17EAD9, #6078EA); 
-    background: -moz-linear-gradient(bottom right, #17EAD9, #6078EA); 
-    background: linear-gradient(to bottom right, #17EAD9, #6078EA);
+    background: #24292E; 
+    background: -webkit-linear-gradient(left top, #24292E, rgb(91, 91, 92)); 
+    background: -o-linear-gradient(bottom right, #24292E, rgb(91, 91, 92)); 
+    background: -moz-linear-gradient(bottom right, #24292E, rgb(91, 91, 92)); 
+    background: linear-gradient(to bottom right, #24292E, rgb(91, 91, 92));
 }
 
 .img-max {
@@ -91,7 +92,7 @@ body {
 
 .active-tab {
     border-bottom-style: solid;
-    border-color: #3498DB;
+    border-color: #24292E;
     border-width: 2px;
 }
 
@@ -102,7 +103,7 @@ body {
     padding-bottom: 15px;
     margin-bottom: 15px;
     border-radius: 10px;
-    border: 2px solid #3498DB;
+    border: 2px solid #24292E;
     text-align: center;
 
     -webkit-transition-duration: 0.4s; /* Safari */
@@ -110,7 +111,7 @@ body {
 }
 
 .button:hover {
-    background-color: #3498DB; /* Green */
+    background-color: #24292E; /* Green */
     color: white;
 }
 

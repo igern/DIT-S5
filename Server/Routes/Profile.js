@@ -7,9 +7,13 @@ module.exports = function(app, db) {
             const client = await Database.Pool.connect();
 
             new Promise((resolve) => {
-                resolve(client.query(Database.QueryStrings.SelectProfileByUsername, [req.headers.username]));
+                if(req.headers.email == undefined) {
+                    resolve(client.query(Database.QueryStrings.SelectProfileByEmail, [Token.ReadData(req.headers.token)]));
+                } else {
+                    resolve(client.query(Database.QueryStrings.SelectProfileByEmail, [req.headers.email]));
+                }
             }).then((result) => {
-                res.set('Profile', JSON.stringify([result.rows[0].email, result.rows[0].username, result.rows[0].role, result.rows[0].avatar]));
+                res.set('Profile', JSON.stringify([result.rows[0].username, result.rows[0].role, result.rows[0].avatar]));
                 res.status(200).send();
             }).catch((e) => {
                 console.error(e);

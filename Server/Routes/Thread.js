@@ -16,8 +16,8 @@ module.exports = function(app, db) {
                 } else if(req.headers.creator != undefined) {
                     // every thread made by user
                 } else {
-                    res.status(400).send();
-                    resolve(Promise.reject("No action defined for input!"));
+                    // 20 most recently active threads
+                    resolve(client.query(Database.QueryStrings.SelectThreadsByRecentActivity));
                 }
             }).then((result) => {
                 res.set('Thread', JSON.stringify(result.rows));
