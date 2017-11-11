@@ -12,7 +12,7 @@ module.exports = Object.freeze({
     SelectAllCategories: 'SELECT * FROM category',
     SelectCategoryByID: 'SELECT * FROM category WHERE id=$1',
     UpdateCategory: 'UPDATE category SET title=$1, color=$2 WHERE id=$3',
-    InsertCategory: 'INSERT INTO category (title, color) VALUES ($1, $2)',
+    InsertCategory: 'INSERT INTO category (title, color) VALUES ($1, $2) RETURNING id',
     DeleteCategory: "DELETE FROM category WHERE id=$1",
 
     // Thread Related Queries

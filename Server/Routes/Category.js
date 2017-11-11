@@ -1,5 +1,6 @@
 var Token = require('../Token');
 var Database = require('../Database');
+var Notifier = require('../Notifications');
 
 module.exports = function(app, db) {
     app.get('/category', (req, res) => {
@@ -43,6 +44,7 @@ module.exports = function(app, db) {
                     return Promise.reject("User is not an admin!");
                 }
             }).then((result) => {
+                Notifier.AnnounceNewCategory(req.headers.title, result.rows[0].id, req.headers.color);
                 res.status(200).send();
             }).catch((e) => { 
                 console.error(e)

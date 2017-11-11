@@ -78,21 +78,15 @@ function createCategory() {
                 'token': localStorage.getItem("token"),
                 'title': $("#CategoryName").val(),
                 'color': $("#CategoryColor").val()
+            },
+            complete: function(e, xhr, settings) {
+                if(e.status == 409) {
+                    alert('A category with that name already exists!');
+                }
             }
         }).then((result) => {
             $("#CategoryTitle").val('');
             CloseCategoryModal();
-            $("#dynamic-categories").empty();
-            getCategories().then((result) => {
-                for(i = 0; i < result.length; i++) {
-                    $("#dynamic-categories").append("" + 
-                        "<div onclick=\"showThreadListView(); showThreadsByCategory(" + result[i].id + ");\" class=\"clickable category-tab\">" +
-                        "<div class=\"category-color\" style=\"background-color: " + result[i].color + ";\"></div>" +
-                        "<div class=\"category-title\">" + result[i].title + "</div>" +
-                        "</div><br>" 
-                    );
-                }
-            });
         });
     }
 }
